@@ -1,0 +1,40 @@
+<%- include('../partials/userHeader.ejs')-%>
+<section class="h-100 h-custom bg-black register">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-lg-8 col-xl-6">
+        <div class="rounded-3">
+          <div class="card-body p-4 p-md-5">
+            <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 px-md-2">Edit Profile</h3>
+            <% if(message){ %>
+                      <script>
+                        Swal.fire('<%=message%>')
+                      </script>
+                      <% } %>
+
+            <form method="post" action="/editprofile" class="px-md-2" name="myform" onsubmit="return validateform()">
+
+              <div class="form-outline mb-4">
+                <label class="form-label" for="form3Example1q">Name</label>
+                <input pattern="[^\s@<>]+" type="text" id="form3Example1q username" class="form-control" name="name" value="<%=user.name%>" required/>
+              </div>
+              <div class="form-outline mb-4">
+                <label class="form-label" for="form3Example1q">Email</label>
+                <input type="email" id="form3Example1q" class="form-control" name="email" value="<%=user.email%>" required/>
+              </div>
+              <div class="form-outline mb-4">
+                <label class="form-label" for="form3Example1q">Mobile Number</label>
+                <input type="text" id="form3Example1q" class="form-control" name="mobile" value="<%=user.mobile%>" required/>
+              </div>
+              <button type="submit" class="btn btn-success btn-lg mb-1">Update</button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+

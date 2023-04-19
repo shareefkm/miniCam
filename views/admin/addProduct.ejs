@@ -1,0 +1,256 @@
+<%- include('../partials/adminHeader.ejs')-%>
+
+<!-- <div class="container tm-mt-big tm-mb-big">
+      <div class="row">
+        <div class="col-xl-9 col-lg-10 col-md-12 col-sm-12 mx-auto">
+          <div class="tm-bg-primary-dark tm-block tm-block-h-auto">
+            <div class="row">
+              <div class="col-12">
+                <h2 class="tm-block-title d-inline-block">Add Product</h2>
+              </div>
+            </div>
+            <div class="row tm-edit-product-row">
+              <div class="col-xl-6 col-lg-6 col-md-12">
+                <form action="" class="tm-edit-product-form" method="post" enctype="multipart/form-data">
+                  <div class="form-group mb-3">
+                    <label
+                      for="name"
+                      >Product Name
+                    </label>
+                    <input
+                      id="name"
+                      name="Name"
+                      type="text"
+                      class="form-control validate"
+                      required
+                    />
+                  </div>
+                  <div class="form-group mb-3">
+                    <label
+                      for="description"
+                      >Description</label>
+                    <textarea
+                     name="Description"
+                      class="form-control validate"
+                      rows="3"
+                      required
+                    ></textarea>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label
+                      for="category"
+                      >Category</label>
+                    <select name="category"
+                      class="custom-select tm-select-accounts" 
+                      id="category"
+                    ><% if(category.length > 0){%>
+                        <% for (let i = 0; i < category.length; i++) {%>
+                      <option name="category"><%=category[i].categoryname%></option>
+                      <%}}else{%>
+                        <option value="3">Category Not found</option>
+                       <%}%>
+                    </select>
+                  </div>
+                  <div class="row">
+                      <div class="form-group mb-3 col-xs-12 col-sm-6">
+                          <label
+                            for="Price"
+                            >Price
+                          </label>
+                          <input
+                            id="Price"
+                            name="Price"
+                            type="text"
+                            class="form-control validate"
+                            data-large-mode="true"
+                          />
+                        </div>
+                        <div class="form-group mb-3 col-xs-12 col-sm-6">
+                          <label
+                            for="stock"
+                            >Quantity
+                          </label>
+                          <input
+                            id="stock"
+                            name="stock"
+                            type="text"
+                            class="form-control validate"
+                            required
+                          />
+                        </div>
+                  </div>
+                  
+              </div>
+              <div class="col-xl-6 col-lg-6 col-md-12 mx-auto mb-4">
+                <div class="tm-product-img-dummy mx-auto ">
+                  <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators"></ol>
+                    <div class="carousel-inner"></div>
+                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="sr-only">Next</span>
+                    </a>
+                  </div> -->
+                  <div class="container mt-5 mb-5">
+                    <div class="row">
+                      <div class="col-xl-9 col-lg-10 col-md-12 col-sm-12 mx-auto">
+                        <div class="bg-primary text-light p-4">
+                          <div class="row">
+                            <div class="col-12">
+                              <h2 class="d-inline-block">Add Product</h2>
+                            </div>
+                          </div>
+                          <div class="row edit-product-row">
+                            <div class="col-xl-6 col-lg-6 col-md-12">
+                              <form action="" class="edit-product-form" method="post" enctype="multipart/form-data">
+                                <div class="form-group mb-3">
+                                  <label for="name">Product Name</label>
+                                  <input id="name" name="Name" type="text" class="form-control" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                  <label for="description">Description</label>
+                                  <textarea name="Description" class="form-control" rows="3" required></textarea>
+                                </div>
+                                <div class="form-group mb-3">
+                                  <label for="category">Category</label>
+                                  <select name="category" class="custom-select" id="category">
+                                    <% if(category.length > 0){%>
+                                    <% for (let i = 0; i < category.length; i++) {%>
+                                    <option name="category"><%=category[i].categoryname%></option>
+                                    <%}}else{%>
+                                    <option value="3">Category Not found</option>
+                                    <%}%>
+                                  </select>
+                                </div>
+                                <div class="row">
+                                  <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                    <label for="Price">Price</label>
+                                    <input id="Price" name="Price" type="text" class="form-control" data-large-mode="true">
+                                  </div>
+                                  <div class="form-group mb-3 col-xs-12 col-sm-6">
+                                    <label for="stock">Quantity</label>
+                                    <input id="stock" name="stock" type="text" class="form-control" required>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-xl-6 col-lg-6 col-md-12 mx-auto mb-4">
+                                <div class="product-img-dummy mx-auto">
+                                  <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                                    <ol class="carousel-indicators"></ol>
+                                    <div class="carousel-inner"></div>
+                                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                      <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                      <span class="sr-only">Next</span>
+                                    </a>
+                                  </div>
+                  
+                  <!-- <i
+                    class="fas fa-cloud-upload-alt tm-upload-icon"
+                    onclick="document.getElementById('fileInput').click();"
+                  ></i> -->
+                </div>
+                <div class="custom-file mt-3 mb-3">
+                  <!-- <input id="fileInput" type="file" style="display:none;" /> -->
+                  <input class="form-control custom-file-input" name="file" multiple type="file" id="fileInput" required>
+                  <input
+                    type="button"
+                    class="btn btn-primary btn-block mx-auto"
+                    value="UPLOAD PRODUCT IMAGE"
+                    onclick="document.getElementById('fileInput').click();"
+                  />
+                </div>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary btn-block text-uppercase">Add Product Now</button>
+              </div>
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<%- include('../partials/adminFooter.ejs')-%>
+
+<script>
+
+ // get the file input element
+const fileInput = document.getElementById('fileInput');
+
+// add event listener to file input element
+fileInput.addEventListener('change', function() {
+  // get the selected files
+  const files = fileInput.files;
+  
+  // get the carousel inner element
+  const carouselInner = document.querySelector('.carousel-inner');
+  
+  // remove any existing images from the carousel
+  carouselInner.innerHTML = '';
+  
+  // loop through the selected files
+  for (let i = 0; i < files.length; i++) {
+    // create a FileReader object
+    const reader = new FileReader();
+    
+    // set the onload function of the FileReader object
+    reader.onload = function() {
+      // create an image element
+      const img = document.createElement('img');
+      
+      // set the src attribute of the image element to the data URL
+      img.src = reader.result;
+      
+      // create a carousel item element
+      const carouselItem = document.createElement('div');
+      carouselItem.classList.add('carousel-item');
+      if (i === 0) {
+        carouselItem.classList.add('active');
+      }
+      
+      // add the image element to the carousel item element
+      carouselItem.appendChild(img);
+      
+      // add the carousel item element to the carousel inner element
+      carouselInner.appendChild(carouselItem);
+    };
+    
+    // read the selected file as a data URL
+    reader.readAsDataURL(files[i]);
+  }
+  
+  // create the carousel indicators
+  const carouselIndicators = document.querySelector('.carousel-indicators');
+  carouselIndicators.innerHTML = '';
+  for (let i = 0; i < files.length; i++) {
+    const carouselIndicator = document.createElement('li');
+    carouselIndicator.setAttribute('data-target', '#carouselExampleIndicators');
+    carouselIndicator.setAttribute('data-slide-to', i.toString());
+    if (i === 0) {
+      carouselIndicator.classList.add('active');
+    }
+    carouselIndicators.appendChild(carouselIndicator);
+  }
+});
+
+// add event listener to delete buttons
+const deleteButtons = document.querySelectorAll('.delete-button');
+for (let i = 0; i < deleteButtons.length; i++) {
+  deleteButtons[i].addEventListener('click', function() {
+    // get the parent carousel item element
+    const carouselItem = this.parentNode.parentNode;
+    
+    // remove the carousel item element from the DOM
+    carouselItem.parentNode.removeChild(carouselItem);
+  });
+}
+
+
+</script>

@@ -1,0 +1,49 @@
+<% if(message){ %>
+<script>
+  Swal.fire("<%=message%>");
+</script>
+<% } %>
+<section class="h-100 h-custom bg-black otpLog">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-lg-8 col-xl-6">
+        <div class="rounded-3">
+          <div class="card-body p-4 p-md-5">
+            <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 px-md-2">Login With OTP</h3>
+
+            <form class="px-md-2" method="post" action="/mobileverify">
+              <div class="form-outline mb-4">
+                <label class="form-label" for="form3Example1q"
+                  >Enter Mobile Number</label
+                >
+                <input
+                  type="text"
+                  id="form3Example1q"
+                  class="form-control"
+                  name="mobile"
+                  required
+                />
+              </div>
+              <div class="form-outline mb-4 d-flex justify-content-center">
+                <button type="submit" class="btn btn-success btn-lg mb-1">
+                  Send OTP
+                </button>
+              </div>
+              <p class="text-center text-muted mt-5 mb-0">
+                <a href="login" class="fw-bold text-body"
+                  ><u>Login With Email</u></a
+                >
+              </p>
+              <p class="text-center text-muted mt-5 mb-0">
+                Don't have an account?
+                <a href="signup" class="fw-bold text-body"
+                  ><u>Signup here</u></a
+                >
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

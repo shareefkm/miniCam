@@ -1,0 +1,72 @@
+
+
+<%- include('../partials/adminHeader.ejs')-%>
+            
+            <div class="mt-5">
+                  <div class="table-responsive mt-2">
+                    <% 
+                    if(adMsg){
+                      %>
+                      <script>
+                        Swal.fire('<%=adMsg%>')
+                        </script>
+                      <%
+                    }
+                    %>
+                    <table id="users" class="table mt-5 table-bordered table-striped text-black">
+              <thead>
+                  <tr>
+                <th>No.</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Verified</th>
+                <th>Status</th>
+                <th>Set Status</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% if(users.length > 0){%>
+               <%   for(let i=0;i<users.length;i++){%>
+                          <tr>
+                                  <td><%=i+1%></td>
+                                  <td><%=users[i].name%></td>
+                                  <td><%=users[i].email%></td>
+                                  <td><%=users[i].mobile%></td>
+                                  <td><%if(users[i].is_verified === 0){%>
+                                          <p>User Not Verified</p>
+                                     <% }else{%>
+                                          <p>User Verified</p>
+                                    <% } %></td>
+                                  <td><%if(users[i].is_blocked === 0){%>
+                                          <p>Active</p>
+                                     <% }else{%>
+                                          <p>Blocked</p>
+                                    <% } %></td>
+                                  <td>
+                                    <%if(users[i].is_blocked === 0){%>
+                                      <a href="/admin/blockUser?id=<%=users[i]._id%>" onclick=" return confirm('Do you want to Block <%=users[i].name%> ?')" class="btn btn-danger btn-block">Block</a>
+                                    <%}else{%>
+  
+                                      <a href="/admin/blockUser?id=<%=users[i]._id%>" onclick=" return confirm('Do you want to Unblock <%=users[i].name%> ?')" class="btn btn-warning btn-block">Unblock</a>
+                                    <%}%>
+                                  </td>
+                                  </tr>       
+                                  <% } %>
+                            <%  }else{%><tr>
+                                      <td colspan="5">Users Not fount</td>
+                                      </tr>
+                                      </tbody>
+                                      
+                                      <%  } %>
+                                      </table>
+                    </div>
+                    
+              </div>
+        </div>
+    </div>
+</div>
+<%- include('../partials/adminFooter.ejs')-%>
+
+
+<script>$(document).ready( function () {$('#users').DataTable();});</script>

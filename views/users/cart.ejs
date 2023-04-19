@@ -1,0 +1,190 @@
+
+<%- include('../partials/userHeader.ejs')-%>
+
+                  <%
+                    if(message){
+                      %>
+                      <script>
+                        Swal.fire('<%=message%>')
+                      </script>
+                      <%
+                    }
+                    %>
+<div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Item Name</th>
+          <th scope="col">Price</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Total</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+       <% if(cartData && cartData.items && cartData.items.length>0){%>
+        <% for(let i=0; i<cartData.items.length; i++){%>
+          <tr>
+            <th scope="row"><%=i+1%></th>
+            <td><%=cartData.items[i].productId.name%></td>
+            <td>₹: <%=cartData.items[i].productId.price%></td>
+            <td>
+              <button class="quantity-btn minus bg-transparent text-white" onclick="decrement('<%=cartData.items[i].productId._id%>')">-</button>
+              <span class="quantity-value" id="<%=cartData.items[i].productId._id%>"><%=cartData.items[i].quantity%></span>
+              <button class="quantity-btn plus bg-transparent text-white" onclick="increment('<%=cartData.items[i].productId._id%>')">+</button>
+            </td>
+            <td><span id="price-<%=cartData.items[i].productId._id%>">₹: <%= cartData.items[i].price %></span></td>
+            <td><a class="btn btn-danger" onclick="removeProduct('<%=cartData._id%>','<%=cartData.items[i].productId._id%>')">Delete</a></td>
+          </tr>
+          
+          <% } } %>
+        </tbody>
+      <tfoot>
+        <% if(cartData){%>       
+          <tr>
+            <th colspan="4">Subtotal</th>
+            <td>₹: <%=subtotal%></td>
+          </tr>
+      <%  }else{%>
+        <p>Cart Is Empty</p>
+      <%}%>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">          
+      </div>
+      <div class="col-md-6 text-end">
+        <a href="checkout" class="btn-info btn-block">Proceed To Checkout</a>
+      </div>
+    </div>
+  </div>
+
+  
+  
+
+<%- include('../partials/userFooter.ejs')-%>
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script>
+
+function increment(ID){
+        $.ajax({
+            url:`/increment?id=${ID}`,
+            type:'post',
+            contentType:'application/json',
+             dataType:'json',
+             success:function(res){
+                console.log(res);
+                if(res.ProductID == ID){
+                    $(`#${ID}value`).val(`${res.quantity}`)
+                    $(`#${ID}price`).text(`₹${res.totalprice}`)
+                    $('#subtotal').text(`₹${res.subtotal}`)
+        
+                }
+                location.reload()
+             }
+        })
+    }
+    $(document).ready(function(){
+        var x=($('.input').val());
+       if( $('.input').val()<0){
+        $('.de').hide()
+       }else{
+        $('.de').show()
+       }
+    })
+    function decrement(ID){
+        $.ajax({
+            url:`/decrement?id=${ID}`,
+            type:'post',
+            contentType:'application/json',
+             dataType:'json',
+             success:function(res){
+                console.log(res);
+                if(res.ProductID== ID){
+                    $(`#${ID}value`).val(`${res.quantity}`)
+                    $(`#${ID}price`).text(`₹${res.totalprice}`)
+                    $('#subtotal').text(`₹${res.subtotal}`)
+                
+                }
+                location.reload()       
+             }
+        })
+    }
+
+    function removeProduct(cartId,proId){
+        $.ajax({
+            url:"/removeCartItem",
+            data:{
+                cart:cartId,
+                product:proId
+            },
+            method:'post',
+            success:(response)=>{
+                // alert("Product Removed from Cart")
+                Swal.fire({
+                                    position: "center",
+                                    icon: "success",
+                                    title: " Deleted!",
+                                    customClass: "swal-wide",
+                                    showConfirmButton: true
+                                });
+                    window.location.reload()
+            }
+        })
+    }
+
+    function applyCoupon() {
+                    const couponCode = document.getElementById("code").value;
+                    console.log(couponCode);
+                    if (couponCode != "") {
+                        $.ajax({
+                            url: '/add-coupon/' + couponCode,
+                            method: 'post',
+                            success: async (response) => {
+                                if (response.success) {
+                                    // Swal.fire({
+                                    //     position: "center",
+                                    //     icon: "success",
+                                    //     title: "Coupon Added",
+                                    //     customClass: "swal-wide",
+                                    //     showConfirmButton: true,
+                                    // });
+                                    alert('Coupon Added')
+                                    location.reload()
+                                } else if (response.exist) {
+                                    Swal.fire({
+                                        position: "center",
+                                        icon: "error",
+                                        title: "Your code is already exist",
+                                        customClass: "swal-wide",
+                                        showConfirmButton: true,
+                                    });
+                                } else if (response.error) {
+                                    Swal.fire({
+                                        position: "center",
+                                        icon: "error",
+                                        title: "Your code not available",
+                                        customClass: "swal-wide",
+                                        showConfirmButton: true,
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        position: "center",
+                                        icon: "error",
+                                        title: "Something Error! Try Again",
+                                        customClass: "swal-wide",
+                                        showConfirmButton: true,
+                                    });
+                                }
+                            }
+                        })
+                    }
+                }
+    </script>
+

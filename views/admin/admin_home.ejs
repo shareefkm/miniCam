@@ -1,0 +1,78 @@
+
+<%- include('../partials/adminHeader.ejs')-%>
+          
+<div class="container">
+            <!-- row -->
+            <div class="row tm-content-row">
+                <div class="col-12 tm-block-col">
+                    <div class="tm-bg-primary-dark tm-block tm-block-taller tm-block-scroll">
+                        <h2 class="tm-block-title">Orders List</h2>
+                        <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ORDER NO.</th>
+                                        <th scope="col">STATUS</th>
+                                        <th scope="col">USER</th>
+                                        <th scope="col">LOCATION</th>                                       
+                                        <th scope="col">ACTIONS</th>
+                                    </tr>
+                                </thead>
+                        <% if(orders){%>
+                            <tbody>
+                                <% orders.forEach((element,index) => {%>
+                                    <tr>
+                                        <th scope="row"><b><%= index+1 %></b></th>
+                                        <td>
+                                            <div class="tm-status-circle moving">
+                                            </div><%= element.orderStatus %>
+                                        </td>
+                                        <td><b><%= element.userId.name %></b></td>
+                                        <td><b><%= element.userId.address[0].city %></b></td>                                                                                
+                                        <td><div class="d-flex justify-content-center">
+                                          <a href="/admin/vieworder?orderid=<%=element._id%>" class=" btn rounded-pill btn-success d-flex align-items-center justify-content-center" style="height: 30px; width: 90px;" 
+                                          >view
+                                        </a>
+                                            <a <% if(element.orderStatus !== 'Cancelled' && element.is_delivered == false) {%> href="/admin/cancelOrder?orderid=<%=element._id%>" <% }%> 
+                                              class="btn btn-danger rounded-pill d-flex align-items-center justify-content-center" style="height: 30px; width: 90px;" ><% if(element.orderStatus == 'Cancelled') {%> Cancelled <% } else{%> Cancel <% } %></a>
+                                              
+                                              <a <% if(element.is_delivered == false && element.admin_cancelled == false && element.user_cancelled == false) {%> href="/admin/orderStatus?orderId=<%=element._id%>" <% }%>  class="btn btn-warning rounded-pill d-flex align-items-center justify-content-center" style="height: 30px; width: 90px;"
+                                                ><% if(element.is_delivered == true ) {%> Delivered <% } else{%> pending <% } %></a>
+                                          </div>
+                                        </td>
+                                    </tr>
+                                    <!-- <tr>
+                                        <th scope="row"><b>#122348</b></th>
+                                        <td>
+                                            <div class="tm-status-circle pending">
+                                            </div>Pending
+                                        </td>
+                                        <td><b>Jacob Miller</b></td>
+                                        <td><b>London, UK</b></td>
+                                        <td><b>360 km</b></td>
+                                        <td>11:00, 10 NOV 2018</td>
+                                        <td>04:00, 14 NOV 2018</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><b>#122347</b></th>
+                                        <td>
+                                            <div class="tm-status-circle cancelled">
+                                            </div>Cancelled
+                                        </td>
+                                        <td><b>George Wilson</b></td>
+                                        <td><b>London, UK</b></td>
+                                        <td><b>340 km</b></td>
+                                        <td>12:00, 22 NOV 2018</td>
+                                        <td>06:00, 28 NOV 2018</td>
+                                    </tr> -->
+                                    
+                                    <%  }); %>
+                                </tbody>
+                                <%  } %>
+                            </table>
+                            
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('../partials/adminFooter.ejs')-%>

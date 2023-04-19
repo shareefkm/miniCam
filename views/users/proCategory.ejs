@@ -1,0 +1,37 @@
+
+<%- include('../partials/userHeader.ejs')-%>
+<% if(catProduct.products.length>0){
+    for(let i = 0 ; i<catProduct.products.length; i++){%>
+    <div class="container mt-5">
+        <div class="row">
+          <div class="col-md-6 mb-4">   
+            <img src="/images/product/<%=catProduct.products[i].image[0].path%>" class="img-fluid" alt="Product Image">
+          </div>
+          <div class="col-md-6 mb-4">
+            <h2><%=catProduct.products[i].name%></h2>
+            <p><%=catProduct.products[i].description%></p>
+            <p>₹ <%=catProduct.products[i].price%></p>
+            <button onclick="addToCart('<%=catProduct.products[i]._id%>')" class="btn btn-primary">Add To Cart</button>
+          </div>
+        </div>
+      </div>
+<% }
+    }else{%>
+    <p>Product Not Found</p>
+<% } %>
+  
+<%- include('../partials/userFooter.ejs')-%>
+
+<script>
+         function addToCart(proId){
+            $.ajax({
+                url:'/addcart/'+proId,
+                method:'get',
+                success:(response)=>{
+                    // alert(response)
+                    // location.reload()
+                    alert('added to cart')
+                }
+            })
+        }               
+    </script>

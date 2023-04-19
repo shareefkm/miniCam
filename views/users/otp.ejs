@@ -1,0 +1,70 @@
+
+<section class="h-100 h-custom bg-black otpLog">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-lg-8 col-xl-6">
+          <div class="rounded-3">
+            <div class="card-body p-4 p-md-5">
+              <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 px-md-2">Login With OTP</h3>
+  
+              <form class="px-md-2" method="post" action="/mobileotp">
+  
+                <div class="form-outline mb-4">
+                  <label class="form-label" for="form3Example1q">Enter OTP Number</label>
+                    <input type="text" id="form3Example1q" class="form-control" name="otp" required/>
+                  </div>
+                <button type="submit" class="btn btn-success btn-block ms-3 mt-3">
+                  Verify 
+                </button>
+                <button
+                  type="button"
+                  id="resend-otp"
+                  class="btn btn-link btn-block mt-4" 
+                >
+                 Resend OTP
+                </button>
+  
+              </form>
+  
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(() => {
+    const resendOtpButton = $('#resend-otp');
+    let countdown = 10;
+
+    resendOtpButton.on('click', () => {
+      resendOtpButton.prop('disabled', true);
+
+      $.ajax({
+        type: 'POST',
+        url: '/resendOtp',
+        success: () => {
+          startCountdown();
+        },
+        error: (xhr, status, error) => {
+          console.error(error);
+        },
+      });
+    });
+
+    function startCountdown() {
+      const countdownInterval = setInterval(() => {
+        if (countdown > 0) {
+          countdown--;
+          resendOtpButton.html(`Resend OTP (${countdown})`);
+        } else {
+          clearInterval(countdownInterval);
+          resendOtpButton.html('Resend OTP');
+          resendOtpButton.prop('disabled', false);
+          countdown = 10;
+        }
+      }, 1000);
+    }
+  });
+</script>

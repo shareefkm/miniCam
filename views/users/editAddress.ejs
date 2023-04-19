@@ -1,0 +1,116 @@
+<%- include('../partials/userHeader.ejs')-%> <%if(message){ %>
+<script>
+  Swal.fire("<%=message%>");
+</script>
+<% } %>
+<div class="row">
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-md-6">
+        <h3><u> Edit Address</u></h3>
+      </div>
+      <div class="col-md-6"></div>
+    </div>
+
+    <form action="/editaddress?index=<%=chIndex%>" method="post">
+      <div class="mb-3">
+        <div class="row">
+          <div class="col-md-6">
+            <label for="firstname" class="form-label">First Name</label>
+            <input
+              name="firstname"
+              type="text"
+              class="form-control"
+              placeholder="Enter your first name"
+              value="<%=isUser.address[chIndex].firstname%>"
+            />
+          </div>
+          <div class="col-md-6">
+            <label for="lastname" class="form-label">Last Name</label>
+            <input
+              name="lastname"
+              type="text"
+              class="form-control"
+              placeholder="Enter your last name"
+              value="<%=isUser.address[chIndex].lastname%>"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input
+          name="email"
+          type="email"
+          class="form-control"
+          id="email"
+          placeholder="Enter your email address"
+          value="<%=isUser.address[chIndex].email%>"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="mobile" class="form-label">Mobile</label>
+        <input
+          name="mobile"
+          type="text"
+          class="form-control"
+          id="email"
+          placeholder="Enter your mobile number"
+          value="<%=isUser.address[chIndex].mobile%>"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="address" class="form-label">Address</label>
+        <input
+          name="address"
+          type="text"
+          class="form-control"
+          id="address"
+          placeholder="Enter your address"
+          value="<%=isUser.address[chIndex].address%>"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="city" class="form-label">City</label>
+        <input
+          name="city"
+          type="text"
+          class="form-control"
+          id="city"
+          placeholder="Enter your city"
+          value="<%=isUser.address[chIndex].city%>"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="state" class="form-label">State</label>
+        <input
+          name="state"
+          type="text"
+          class="form-control"
+          id="state"
+          placeholder="Enter your state"
+          value="<%=isUser.address[chIndex].state%>"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="zip" class="form-label">ZIP Code</label>
+        <input
+          name="zip"
+          type="text"
+          class="form-control"
+          id="zip"
+          placeholder="Enter your ZIP code"
+          value="<%=isUser.address[chIndex].zip%>"
+        />
+      </div>
+      <div class="mb-3">
+        <button type="submit" class="btn btn-primary btn-lg btn-block">
+          Edit
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <%- include('../partials/userFooter.ejs')-%>
+</div>

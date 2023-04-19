@@ -1,0 +1,77 @@
+
+<%- include('../partials/adminHeader.ejs')-%>
+
+<div class="container">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row">
+                <div class="col-sm-4">
+                    <h2>Order <b>Details</b></h2>
+                </div>
+                <div class="col-sm-8">
+                    <button type="button" class="btn-dark" onclick="return ExportToExcel()" ><i class="material-icons">Export to Excel</i> </button>
+                    <button type="button" class="btn-dark" onclick="return printTable()" ><i class="material-icons">Print</i> </button>
+                </div>
+            </div>
+        </div>
+        <div class="table-filter">
+            <div class="row">
+                <form id="sales-filter">
+                    <label for="filter">Filter by:</label>
+                    <select id="filter" name="filter">
+                      <option value="all">All Time</option>
+                      <option value="weekly">This Week</option>
+                      <option value="yearly">This Year</option>
+                    </select>
+                    <button type="submit">Generate Report</button>
+                  </form>
+            </div>
+        </div>
+  <div class="tm-block tm-block-taller tm-block-scroll">
+    <table class="table" id="salesTable">
+      <thead>
+          <tr>
+              <th>#</th>
+              <th>Customer</th>
+  <th>Location</th>
+  <th>Order Date</th>						
+  <th>Net Amount</th>
+          </tr>
+      </thead>
+      <tbody>       
+          <%if(sales!=0){%>
+              <%let i=1%>
+              <%sales.forEach((sales,index) => {%>
+                  <tr>
+                     
+                      <td><%=index+1%></td>
+                      <td><%=sales.userId.username%></td>
+                      <td><%=sales.location%></td>
+                      <td><%=sales.date.toDateString()%></td>                        
+                      <td><%=sales.totalSales%></td>
+                  </tr>
+                  <%i++%>
+              <%})%>
+              
+              <%}else{%>
+                  <tr>
+                      <td>null</td>
+                  </tr>
+                  <%}%>
+          
+      </tbody>
+  </table>
+  </div>
+        
+        <div class="clearfix">
+            <ul class="pagination">
+              <!-- <%for(let j=1;j<=totalPages;j++){%>
+                <li class="page-item"><a href="?page=<%=j%>" class="page-link"><%=j%></a></li>
+               <%}%> -->
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<%- include('../partials/adminFooter.ejs')-%>

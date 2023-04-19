@@ -1,0 +1,400 @@
+
+<%- include('../partials/userHeader.ejs')-%>
+
+<%if(message){
+    %>
+    <script>
+      Swal.fire('<%=message%>')
+    </script>
+    <%
+  }
+  %>
+
+    <div class="container">
+  <div class="row text-center">
+      <h2>Checkout</h2>
+      <hr>
+  </div>
+  <div class="row">
+      <div class="col-md-8">
+        <div class="row">
+          <div class="col-md-6">
+            <h3><u> Billing Address</u></h3>
+            </div>
+          <div class="col-md-6">
+            <a href="/addAddress" class="btn btn-primary px-4">Add Address</a>
+            </div>
+          </div>
+           
+        <form action="" id="checkout-form">
+          <% if(isUser.address.length>0){%>
+            <div class="col-lg-8">
+                  <div class="card">
+                      <div class="card-body">
+                        <% isUser.address.forEach((addrs,index)=>{%>
+                          <div class="row m-3 border bg-white text-black">
+                              <ul style="list-style-type: none;">
+                      <li>
+                          <input type="radio" name="address" value="<%=index%>" style="float: left;" checked >
+                          <div style="margin-left: 25px;">
+                              <%=addrs.firstname%><br>
+                              <%=addrs.lastname%><br>
+                              <%=addrs.email%><br>
+                              <%=addrs.mobile%><br>
+                              <%=addrs.address%><br>
+                              <%=addrs.city%><br>
+                              <%=addrs.state%><br>
+                              <%=addrs.zip%><br>
+                          </div>
+                      </li>
+                  </ul>
+                      </div>
+          <%  })%>
+                      </div>
+                  </div>
+              </div>
+        <%  }else{%>
+          <p>Address Not Found </p>
+      <%  }
+          %>
+            
+          
+      </div>
+      <div class="col-sm-4">
+        <div class="card card-cascade card-ecommerce wider shadow p-3 mb-5 ">
+          <!--Card Body-->
+          <div class="card-body card-body-cascade">
+            <div class="input-group">
+            <input id="code" type="text" class="form-control" placeholder="Enter your Coupon Code" aria-label="Enter your text" aria-describedby="button-addon2">
+            <div class="input-group-append">
+              &emsp;
+            </div>
+            <a onclick="applyCoupon()" class="btn btn-success" type="submit">Applay Coupon</a>
+          </div> 
+            
+            <!--Card Description-->
+            
+            <div class="card2decs">
+              <p class="heading1"><strong>MINI CAM</strong></p>
+              <p class="quantity">Qty : <span class="float-right text1"><%=cart.items.length%></span></p>
+              <p class="subtotal">Subtotal <span class="float-right text1">₹ :<%=cart.total%></span></p>
+              <p class="shipping">Shipping : <span class="float-right text1"> Free</span></p>
+              <p class="shipping">Discount : <span class="float-right text1">₹ :<%=cart.discount%> </span></p>
+              <p class="total"><strong>Total</strong><span class="float-right totalText1"> ₹ :<span class="totalText2"> <%=cart.total-cart.discount%></span></span></p>
+  
+            </div>
+  
+            <div class="payment">
+  
+        <!--      <h5><u> Select Payment Method</u></h5>
+                <div class="form-check">
+  <input value="COD" class="form-check-input" type="radio" name="paymentMethod" id="flexRadioDefault1">
+  <label class="form-check-label" for="flexRadioDefault1">
+    Cash
+  </label>
+</div>
+<div class="form-check">
+  <input value="online" class="form-check-input" type="radio" name="paymentMethod" id="flexRadioDefault2" checked>
+  <button id="rzp-button1">Pay with Razorpay</button>
+  <label class="form-check-label" for="flexRadioDefault2">
+  </label>
+</div> -->
+
+<div class="">
+                                          <label for="payment">
+                                                <input type="radio" name="payment-method" value="online" id="payment">
+                                                Online payment
+                                            </label>
+                                        </div>
+                                        <div class="">
+                                            <label for="paypal">
+                                                <input type="radio" name="payment-method" value="COD" id="cash">
+                                                Cash on delivery
+                                            </label>
+                                        </div>
+                                        <div class="">
+                                            <label for="paypal">
+                                                <input type="radio" name="payment-method" value="wallet" id="wallet">
+                                                Wallet
+                                            </label>
+                                        </div>
+  
+            </div>
+  
+            <!--Card footer-->
+            <div class="card-footer text-center">
+            <button type="submit" class="purchaseLink site-btn">
+              PLACE ORDER
+              </div>
+            </button>
+            
+          </div>
+          
+        </div>
+      </div>
+  </form>
+  
+    </div>
+  </div>
+
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+
+
+  function applyCoupon() {
+                    const couponCode = document.getElementById("code").value;
+                    alert(couponCode)
+                    if (couponCode != "") {
+                        $.ajax({
+                            url: '/add-coupon/' + couponCode,
+                            method: 'post',
+                            success: async (response) => {
+                                if (response.success) {
+                                    Swal.fire({
+                                        position: "center",
+                                        icon: "success",
+                                        title: "Coupon Added",
+                                        customClass: "swal-wide",
+                                        showConfirmButton: true,
+                                    });
+                                    // alert('Coupon Added')
+                                    location.reload()
+                                } else if (response.exist) {
+                                    Swal.fire({
+                                        position: "center",
+                                        icon: "error",
+                                        title: "Your code is already exist",
+                                        customClass: "swal-wide",
+                                        showConfirmButton: true,
+                                    });
+                                } else if (response.error) {
+                                    Swal.fire({
+                                        position: "center",
+                                        icon: "error",
+                                        title: "Your code not available",
+                                        customClass: "swal-wide",
+                                        showConfirmButton: true,
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        position: "center",
+                                        icon: "error",
+                                        title: "Something Error! Try Again",
+                                        customClass: "swal-wide",
+                                        showConfirmButton: true,
+                                    });
+                                }
+                            }
+                        })
+                    }
+                }
+
+  $('#checkout-form').submit((e) => {
+                    e.preventDefault()
+                    $.ajax({
+                        url: '/checkout',
+                        method: 'post',
+                        data: $('#checkout-form').serialize(),
+                        success: async (response) => {
+                            if (response.status) {
+                              Swal.fire({
+                                    position: "center",
+                                    icon: "success",
+                                    title: "Your order sucessfully",
+                                    customClass: "swal-wide",
+                                    showConfirmButton: true,
+                                });
+                              // console.log(response);
+                              //   alert('order success')
+                                window.location.href = '/orderDetails'
+                            } else if(response.noSelect){
+                                // alert("select payment method option")
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    title: "You are not selecting option",
+                                    customClass: "swal-wide",
+                                    showConfirmButton: true,
+                                });
+                                window.location.href = '/checkout'
+                            } else if (response.zeroWallet) {
+                              // console.log(response.zeroWallet);
+                              //   alert("No balance in your wallet")
+                              Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    title: "No balance in your wallet",
+                                    customClass: "swal-wide",
+                                    showConfirmButton: true,
+                                });
+                            } else {
+                                if (response.order == null) {
+                                    // alert('Something Wrong Please Try Again!')
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Something Wrong',
+                                        text: 'Please Try Again!',
+                                        customClass: 'swal-wide',
+                                    })
+                                } else {
+                                    razorpayPayment(response)
+                                    console.log(response);
+                                }
+                            }
+                        }
+                    })
+                })
+
+                function razorpayPayment(payment) {
+      let options = {
+    "key": "rzp_test_dCipjxzSRdIN7F", // Enter the Key ID generated from the Dashboard
+    "amount": payment.order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Acme Corp",
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id":payment.order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+      verifyPayment(response, payment)
+        // alert(response.razorpay_payment_id);
+        // alert(response.razorpay_order_id);
+        // alert(response.razorpay_signature)
+    },
+    "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9000090000"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.open();
+// rzp1.on('payment.failed', function (response){
+//         alert(response.error.code);
+//         alert(response.error.description);
+//         alert(response.error.source);
+//         alert(response.error.step);
+//         alert(response.error.reason);
+//         alert(response.error.metadata.order_id);
+//         alert(response.error.metadata.payment_id);       
+// });
+}
+  function verifyPayment(payment,order) {
+                    $.ajax({
+                        url:'/verify-payment',
+                        data:{
+                            payment,
+                            order
+                        },
+                        method:'post',
+                        success:(response)=>{
+                            if (response.status) {
+                              // alert('Your payment successfully')
+                              Swal.fire({
+                                    position: "center",
+                                    icon: "success",
+                                    title: "Your payment successfully",
+                                    customClass: "swal-wide",
+                                    showConfirmButton: true,
+                                });
+                                window.location.href = '/orderDetails'
+                            } else {
+                                // alert('Your payment failed')
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    title: "Your payment failed",
+                                    customClass: "swal-wide",
+                                    showConfirmButton: true,
+                                });
+                                window.location.href = '/checkout'
+                            }
+                        }
+                    })
+                }
+  </script>
+<%- include('../partials/userFooter.ejs')-%>
+
+<style>
+  .card{
+  padding:0!important;
+  margin-top:40px;
+}
+
+.quantity,.shipping,.promocode,.subtotal,.cardAndExpire,.nameAndcvc{
+  margin:5%;
+  color:#6c757d!important
+}
+
+.heading1{
+    margin:5%;
+font-size: 25px;
+}
+
+.heading2{
+    margin:5%;
+margin-top:15%;
+font-size: 20px;
+}
+
+.payment{
+  background-color: #f0edeb;
+  color:#6c757d!important;
+  padding:3px;
+  margin-top: 15%;
+}
+
+
+.card-footer{
+background-color: black;
+color:white;
+}
+
+.purchaseLink{
+  text-decoration: none;
+}
+
+.row1{
+font-size:12px;
+}
+
+.row2{
+  font-weight: 600;
+}
+
+.subRow{
+  margin-left:10%;
+margin-bottom: 2%;
+  margin-top:5%;
+}
+
+p.cardAndExpireValue,p.nameAndcvcValue{
+  margin:5%;
+  margin-bottom: 10%;
+font-weight: 600;}
+
+p.nameAndcvc,p.cardAndExpire{
+  margin-bottom: -10px;
+}
+
+.total{
+  margin:5%;
+}
+
+.totalText{
+  font-weight: 700;
+
+}
+.totalText2{
+ font-weight: 700;
+  font-size:30px;
+}
+  </style>
