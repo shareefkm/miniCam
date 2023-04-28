@@ -5,6 +5,7 @@ const Category = require('../models/category')
 const Product = require('../models/product_model');
 const Cart = require('../models/cart')
 const Orders = require('../models/order')
+const Banner = require('../models/banner')
 
 
 const accountsid = 'ACb1519db06c6dd72a55fa6dc93582f0a9';
@@ -25,15 +26,16 @@ let index;
 //user home
 const getHome = async(req,res)=>{
     try {
+        let banners = await Banner.find({}).sort({_id:-1})
         const categoryData = await Category.find({is_deleted:0})
         const productsData = await Product.find({is_deleted:0}).limit(6)
         isUser = req.session.user_id
         if(isUser){
             const profData = await User.findOne({_id:isUser})
-            res.render('home',{isUser:profData,products:productsData,category:categoryData,message})  
+            res.render('home',{isUser:profData,products:productsData,category:categoryData,message,banners})  
             message = null      
         }else{
-            res.render('home',{isUser,products:productsData,category:categoryData,message})        
+            res.render('home',{isUser,products:productsData,category:categoryData,message,banners})        
         }
     } catch (error) {
         console.log(error.message);
@@ -162,35 +164,7 @@ const sendVerifyMail = async(name,email,user_id)=>{
          console.log(error.message);
     }
 }
-const sendMailForgotPasswor = async(name,email,user_id)=>{
-    try {
-        const transporter = nodeMailer.createTransport({
-            host:'smtp.gmail.com',
-            port:587,
-            secure:false,
-            requireTLS:true,
-            auth:{
-                user:config.verifyMail.user,
-                pass:config.verifyMail.pass
-            }
-        });
-        const mailOptions = {
-            from:'babusabu026@gmail.com',
-            to:email,
-            subject:'For verification',
-            html:'<p>Hello '+name+', Please click her to <a href="http://localhost:3005/verify?id='+user_id+'">verify</a> your email.</p>'
-        }
-        transporter.sendMail(mailOptions,(err,info)=>{
-            if(err){
-                console.log(err);
-            }else{
-                console.log("verify success:"+info.response);
-            }
-        })
-    } catch (error) {
-         console.log(error.message);
-    }
-}
+
 //user login
 const loadLogin = async(req,res)=>{
     try {
@@ -473,8 +447,27 @@ const addAddress = async (req, res) => {
         res.status(500).send('server error')
     }
   }
-  
+    
  
+
+const filterProducts = async(req,res)=>{
+  try {
+  const filterCategory = req.body.categorys
+  console.log(filterCategory.length);
+  const filterPrice = req.body.filterprice
+  let category = []
+  for(let i=0;i<filterCategory.length ; i++){
+    let ncategory  = await Category.findOne({categoryname:filterCategory[i]}).populate('products')
+    category.push(ncategory)
+    console.log(category)
+  }
+  
+    res.json({Data:category})
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('server error')
+  }
+}
 
 module.exports = {
     lordRegister,
@@ -500,5 +493,5 @@ module.exports = {
     editProfile,
     getCategoryData,
     getProductDeatails,
-    
+    filterProducts
 }

@@ -3,33 +3,36 @@
 <%- include('../partials/adminHeader.ejs')-%>
             
             <div class="mt-5">
-                <div class="row">
-                <div class="">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@getbootstrap">Add</button>
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add Category</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form action="/admin/addcategory" method="post" onsubmit="return submit(event)" id="form">
-          <div class="mb-3">
-            <label for="recipient-name" class="col-form-label">Category Name:</label>
-            <input type="text" name="Category" class="form-control" id="recipient-name">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Add</button> 
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
+              <div class="row">
+                <div class="col">
+                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@getbootstrap">Add</button>
+                  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Add Category</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <form action="/admin/addcategory" method="post" onsubmit="return submit(event)" id="form">
+                            <div class="form-group">
+                              <label for="recipient-name" class="col-form-label">Category Name:</label>
+                              <input type="text" name="Category" class="form-control" id="recipient-name">
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              <button type="submit" class="btn btn-primary">Add</button> 
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              </div>
+              
                   <div class="table-responsive mt-2">
                     <% 
                     if(adMsg){
@@ -55,22 +58,25 @@
                                   <td><%=i+1%></td>
                                   <td><%=category[i].categoryname%></td>
                                   <td>
-                                    <a data-bs-toggle="modal" data-bs-target="#exampleModal-<%=category[i]._id%>" data-bs-whatever="@getbootstrap" class="btn btn-warning">Edit</a>
-<div class="modal fade" id="exampleModal-<%=category[i]._id%>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+                                    <a data-toggle="modal" data-target="#exampleModal-<%=category[i]._id%>" data-whatever="@getbootstrap" class="btn btn-warning">Edit</a>
+
+<div class="modal fade" id="exampleModal-<%=category[i]._id%>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel-<%=category[i]._id%>" aria-hidden="true">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title text-black" id="exampleModalLabel-<%=category[i]._id%>">Edit Category</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
       <div class="modal-body">
         <form action="/admin/edit-category?id=<%=category[i]._id%>" method="post" onsubmit="return submit(event)" id="form">
-          <div class="mb-3">
+          <div class="form-group">
             <label for="recipient-name" class="col-form-label text-black">Category Name:</label>
             <input type="text" name="Category" class="form-control" id="recipient-name" value="<%=category[i].categoryname%>">
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-primary">Update</button> 
           </div>
         </form>
@@ -78,6 +84,7 @@
     </div>
   </div>
 </div>
+
 <%if(category[i].is_deleted == 0){%>
 
   <a href="/admin/deletecategory?id=<%=category[i]._id%>" onclick=" return confirm('Do you want to Unlist <%=category[i].name%> ?')"  class="btn btn-danger">Unlist</a>
@@ -101,5 +108,5 @@
         </div>
     </div>
 </div>
-<%- include('../partials/adminFooter.ejs')-%>
 <script>$(document).ready( function () {$('#category').DataTable();});</script>
+<%- include('../partials/adminFooter.ejs')-%>

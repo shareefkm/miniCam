@@ -5,17 +5,68 @@ const bcrypt = require('bcrypt');
 const Cart = require('../models/cart')
 const Coupon = require('../models/coupon')
 const Orders = require('../models/order')
-
-
-
+const Banner = require('../models/banner');
+const moment = require('moment')
+const sharp = require('sharp')
+ 
 let adMsg;
 
 const getAdminHome = async(req,res)=>{
     try {
 
+        const totalSale = await Orders.aggregate([
+            {$match : {paymentStatus:'Paid'}},
+            {$group : {_id : null, total : {$sum :"$grandTotal"}}}])
+        const totalUsers = await User.aggregate([{$group : {_id : null,total :{$count :{}}}}])
+        const totalProduct = await Product.aggregate([{$group : {_id : null , total : {$count : {}}}}])
+        const totalOrders = await Orders.aggregate([
+            {$match : {$and : [{is_returned : 0},{is_delivered :true}]}},
+            {$group : {_id : null, total : {$count : {}}}}])
+            const saleChart = await Orders.aggregate([{$group : {_id : "$paymentType", total : {$count : {}}}}])
+        const start = moment().startOf('month')
+        const end = moment().endOf('month')
+        const date = new Date()
+        const year = date.getFullYear()
+        const currentYear = new Date(year,0,1)
+        
+        const salesByYear = await Orders.aggregate([
+            {$match : {
+                createdAt :{$gte : currentYear},status:{$ne : "cancelled"}
+            }},
+            {$group : {
+                _id : {$dateToString : {format : "%m", date : "$createdAt"}},
+                total : {$sum : "$grandTotal"},
+                count : {$sum : 1}
+            }},
+            {$sort : {_id : 1}}
+        ])
+        let sales = []
+        for (i = 1; i< 13; i++){
+            let result = true
+            for(j = 0; j < salesByYear.length; j++){
+                result = false 
+                if(salesByYear[j]._id == i){
+                    sales.push(salesByYear[j])
+                    break;
+                }else {
+                    result = true
+                    
+                }
+            }
+            if(result){
+                sales.push({_id : i, total : 0, count : 0})
+            }
+            
+        }
+        let yearChart = []
+        for(i = 0; i < sales.length; i++){
+            yearChart.push(sales[i].total)
+        }
+
+
         const usersData = await User.find({is_admin:0})
         const orders = await Orders.find().populate('userId').sort({_id:-1})
-        res.render('admin/admin_home',{adMsg,users:usersData,orders})
+        res.render('admin/admin_home',{adMsg,users:usersData,orders,totalSale,totalUsers,totalProduct,totalOrders,saleChart,yearChart})
         adMsg = null;
     } catch (error) {
         console.log(error);
@@ -187,7 +238,6 @@ const getAddProduct = async(req,res)=>{
 }
 const addProduct = async(req,res)=>{
     try {
-        console.log(req.body);
         const category = await Category.findOne({categoryname:req.body.category})
         const images = req.files.map(file => ({ path: file.filename }))
         const products = new Product({
@@ -210,8 +260,14 @@ const addProduct = async(req,res)=>{
         const proid = await category.save();
     } catch (error) {
         console.log(error);
+        res.status(500).send('server error')
     }
 }
+
+
+
+
+
 const getEditproduct = async(req,res)=>{
     try {
         const id = req.query.id
@@ -225,8 +281,12 @@ const getEditproduct = async(req,res)=>{
 }
 const editProduct = async(req,res)=>{
     try {
+        const mongoose = require('mongoose');
         const id = req.query.id
+        const category = await Category.findOne({categoryname:req.body.category})
+        await Category.updateOne({ products: id }, { $pull: { products: id } });
         const images = await req.files.map(file => ({ path: file.filename }))
+        await Product.updateOne({_id:req.query.id},{$push:{ image:images,}});
             await Product.findOneAndUpdate({_id:id},{
                 $set:{
                     name:req.body.Name,
@@ -234,10 +294,12 @@ const editProduct = async(req,res)=>{
                     price:req.body.Price,
                     stock:req.body.stock,
                     category:req.body.category,
-                    image:images,
-                }})
+                }}) 
+                category.products.push(id)
+                let newCat = await category.save();
                 res.redirect('/admin/product')
                 adMsg = "product edited succecc";
+                console.log(newCat);
         
     } catch (error) {
         console.log(error);
@@ -372,7 +434,8 @@ const adminCoupon = async(req, res) => {
           $set: {
             is_delivered: true,
             delivered_date: Date.now(),
-            orderStatus:'Delivered'
+            orderStatus:'Delivered',
+            paymentStatus:'Paid'
           },
         }
       );
@@ -382,6 +445,38 @@ const adminCoupon = async(req, res) => {
       res.status(500).send('server error')
     }
   };
+  ///confirm return//
+  const returnConfirm = async(req,res)=>{
+    try {
+        const orderId = req.query.orderId;
+        let orders = await Orders.findOne({ _id: orderId })
+        const userId = orders.userId
+        let price = orders.item[0].price
+        let paymentType = orders.paymentType
+        if (paymentType !== 'COD') {
+            await Orders.findByIdAndUpdate(
+                { _id: orderId },
+                {
+                    $set:
+                    {
+                        is_returned:1,
+                        paymentStatus: "refund success"
+                    }
+                }
+            )
+            await User.findOneAndUpdate({_id:userId},{$inc:{wallet:price}})
+            res.redirect('/admin/adminhome')
+            message = "Fund Refunded Success"
+           
+        } else {    
+            res.redirect('/admin/adminhome')
+            message = "Return Confirmed"
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('server error')
+    }
+  }
 
 const getOrderView = async(req,res)=>{
     try {
@@ -424,25 +519,109 @@ const getOrderView = async(req,res)=>{
         res.status(500).send('server error')
     }
   }
-  
-  const getSalesReport = async(req,res)=>{
+
+  // BANNER PAGE
+const adminBanner = async (req, res) => {
     try {
-        let sales = await Orders.aggregate([
-            { '$match': { 'orderStatus': { '$ne': [ 'Cancelled','returned' ] } } },
-            {
-                '$group': {
-                    '_id': null, 'totalCount': { '$sum': { '$ifNull': ["$totalPrice", 0] } },
-                    'grandTotalCount': { '$sum': { '$ifNull': ["$grandTotal", 0] } }
-                }
-            }
-        ])
-        console.log(sales);
-        res.render('admin/salesReport',{sales})
+        let banners = await Banner.find()
+        res.render('admin/adminBanner', {banners})
+    } catch (error) {
+        res.status(500).send('server error')
+    }
+}
+
+  // ADD BANNER
+  const addBanner = async (req,res) => {
+    try {
+        res.render('admin/addBanner')
     } catch (error) {
         console.log(error);
         res.status(500).send('server error')
     }
-  }
+}
+
+
+const doaddBanner = async (req,res) => {
+    try { 
+        let { des1, des2, des3 } = req.body;
+        let image = req.file.filename
+        await Banner({
+            Des1: des1,
+            Des2: des2,
+            Des3: des3, 
+            image: image
+        }).save();
+
+        res.redirect('/admin/banner');
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('server error');
+    }
+}
+const editBanner = async (req, res) => {
+    try {
+        let editId = req.query.id
+        const banner = await Banner.findOne({ _id: editId })
+        res.render('admin/editBanner', { Banner:banner })
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('server error')
+    }
+}
+
+// EDIT BANNER
+const doEditBanner = async (req, res) => {
+    try {
+        let editId = req.query.id
+        let image = req.file.filename
+        await Banner.updateOne({ _id: editId }, {
+            $set: {
+                image: image
+            }
+        })
+        res.redirect('/admin/banner')
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('server error')
+    }
+}
+const deleteBanner = async (req, res) => {
+    let deleteBanner = req.query.id
+    await Banner.deleteOne({ _id: deleteBanner })
+    res.redirect('/admin/banner')
+}
+
+
+  const salesReport = async (req, res, next) => {
+    try {
+      const startDate = req.query.startDate
+        ? new Date(req.query.startDate)
+        : null;
+      const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
+  
+      const query = {
+        paymentStatus: "Paid",
+        orderStatus: "Delivered",
+      };
+      if(startDate != null){
+          const data = await Orders.aggregate([{
+              $match :{
+                 $and :[{ start_date : {$gte: startDate }},
+                  {start_date : {$lte: endDate }},{paymentStatus : "Paid"},{orderStatus : "Delivered"}]
+              }
+          }])
+          const salesReport = data
+          res.render("admin/salesReport", { salesReport });
+      }else {
+          const salesReport = await Orders.find(query);
+          res.render("admin/salesReport", { salesReport });
+      }
+  
+    } catch (error) {
+      console.log(error);
+      res.status(500).send('server error')
+    }
+  };
   
 module.exports = {
     loadAdminLogin,
@@ -470,7 +649,14 @@ module.exports = {
     orderDelivered,
     getOrderView,
     cancelOrder,
-    getSalesReport,
+    salesReport,
     getProductDeatails,
+    addBanner,
+    doaddBanner,
+    adminBanner,
+    editBanner,
+    doEditBanner,
+    deleteBanner,
+    returnConfirm,
     
 }

@@ -49,9 +49,8 @@ const orderSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  orderCount: {
-    type: Number,
-    default: 0,
+  return_reason: {
+    type: String,
   },
   is_returned: {
     type: Number,
@@ -69,6 +68,8 @@ const orderSchema = mongoose.Schema({
 orderStatus: {
   type:String
 },
+},{
+  timestamps: true
 });
 
 module.exports = mongoose.model("Orders", orderSchema);

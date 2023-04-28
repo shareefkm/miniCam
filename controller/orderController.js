@@ -47,7 +47,6 @@ const addcoupon = async(req,res)=>{
 const getCheckout = async(req,res)=>{
     try {
         const chIndex =  req.query.index
-        // console.log(chIndex);
         const cart = await Cart.findOne({user:req.session.user_id})
         const category = await Category.find({is_deleted:0})
         isUser = await User.findOne({_id:req.session.user_id})
@@ -118,7 +117,6 @@ const addCheckout = async(req,res)=>{
                 const orderId = newOrder._id.valueOf()
                 const totalPrice = newOrder.totalPrice
                 const grandTotal = newOrder.grandTotal
-                // console.log(grandTotal); 
                 if (grandTotal == null) {
                     let options = {
                         amount: totalPrice * 100,
@@ -126,7 +124,6 @@ const addCheckout = async(req,res)=>{
                         receipt: orderId
                     }
                     instance.orders.create(options, (err, order) => {
-                        console.log(order);
                         if (err) {
                             console.log(err);
                         }
@@ -147,10 +144,6 @@ const addCheckout = async(req,res)=>{
                     })
                 }
             } else if (req.body['payment-method'] == 'wallet') {
-                // const user = await User.findOne({ _id: userId })
-                // const order = await Orders.findOne({ userId: userId })
-                // const carts = await Cart.findOne({ user: userId })
-                // const orderId = order._id
                 const total = carts.total
                 const grandTotal = carts.total-carts.discount
                 const walletAmount = user.wallet
@@ -179,21 +172,6 @@ const addCheckout = async(req,res)=>{
                     })
                     if (grandTotal == null) {
                         
-                        // if (walletAmount < total) {
-                            // const balancePayment = total - walletAmount
-                            // orderId = newOrder._id.valueOf()
-                            // let options = {
-                            //     amount: balancePayment * 100,
-                            //     currency: "INR",
-                            //     receipt: orderId
-                            // }
-                            // instance.orders.create(options, (err, order) => {
-                            //     if (err) {
-                            //         console.log(err);
-                            //     }
-                            //     res.json({ order, user })
-                            // })
-                        // } else {
                             await Cart.deleteOne({ user: userId })
                             const balanceWallet = walletAmount - total
                             await User.findOneAndUpdate({ _id: userId }, {
@@ -203,7 +181,6 @@ const addCheckout = async(req,res)=>{
                             }).then(() => {
                                 res.json({ status: true })
                             })
-                        // }
                     } else {
                         await Cart.deleteOne({ user: userId })
                         if (walletAmount < grandTotal) {
@@ -370,9 +347,9 @@ const verifyPayment = async(req,res)=>{
         const orderId = req.query.id;
         const itemId = req.query.proid
         const userId = req.session.user_id
+        const reason = req.body.reason
         let orders = await Orders.findOne({ _id: orderId })
         let paymentType = orders.paymentType
-        // console.log(orders);
         let price = orders.item[0].price
         
         if (paymentType !== 'COD') {
@@ -382,13 +359,13 @@ const verifyPayment = async(req,res)=>{
                     $set:
                     {
                         orderStatus: "returned",
-                        paymentStatus: "refund success"
+                        paymentStatus: "refund pending",
+                        return_reason:reason
                     }
                 }
             )
-            await User.findOneAndUpdate({_id:userId},{$inc:{wallet:price}})
             res.redirect('/orderDetails')
-            message = "Returned Fund Refunded your Wallet"
+            message = "Fund Return your wallet after confirmtion "
            
         } else {
             await Orders.findByIdAndUpdate(

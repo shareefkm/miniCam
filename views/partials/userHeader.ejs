@@ -4,8 +4,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
 rel="stylesheet">
 
+<!-- sweetalert -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert@1.1.3/sweetalert.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
+
 <!-- Css Styles -->
-<link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
 <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
 <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
 <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
@@ -16,18 +20,37 @@ rel="stylesheet">
 
 </head>
 <body>
+  
   <!-- Page Preloder -->
   <div id="preloder">
     <div class="loader"></div>
 </div>
 
+<!-- Offcanvas Menu Begin -->
+<div class="offcanvas-menu-overlay"></div>
+<div class="offcanvas-menu-wrapper">
+  <div class="offcanvas__nav__option">
+    <% if(isUser){%>
+      <a href="wishlist"><img src="images/icon/heart.png" alt=""></a>
+    <a href="cart"><img src="images/icon/cart.png" alt=""> <span>0</span></a>
+    <div class="price">₹: <%=isUser.wallet %></div>
+    <% }else{%>                      
+    <a href="/login" style="color: black;">Sign in</a>
+  <%  } %> 
+</div>
+    <div id="mobile-menu-wrap"></div>
+    
+</div>
+<!-- Offcanvas Menu End -->
+
   <!-- Header Section Begin -->
   <header class="header">
+    <!-- <header class="header" id="header"> -->
     <div class="container">
         <div class="row">
             <div class="col-lg-3 col-md-3">
                 <div class="header__logo">
-                    <a href="./index.html"><img src="" alt="">Mini Cam</a>
+                    <a href="/"><img src="" alt="">Mini Cam</a>
                 </div>
             </div>
             <div class="col-lg-6 col-md-6">
@@ -54,16 +77,14 @@ rel="stylesheet">
                                 </ul>
                               </li>
                               <% } %>  
-                        <!-- <li><a href="./blog.html">Blog</a></li>
-                        <li><a href="./contact.html">Contacts</a></li> -->
                     </ul>
                 </nav>
             </div>
             <div class="col-lg-3 col-md-3">
                 <div class="header__nav__option">
-                    <!-- <a href="#" class="search-switch"><img src="images/icon/search.png" alt=""></a> -->
-                    <a href="#"><img src="images/icon/heart.png" alt=""></a>
+                    
                     <% if(isUser){%>
+                      <a href="wishlist"><img src="images/icon/heart.png" alt=""></a>
                     <a href="cart"><img src="images/icon/cart.png" alt=""> <span>0</span></a>
                     <div class="price">₹: <%=isUser.wallet %></div>
                     <% }else{%>                      
@@ -73,119 +94,9 @@ rel="stylesheet">
             </div>
         </div>
         <div class="canvas__open"><i class="fa fa-bars"></i></div>
+
     </div>
 </header>
 <!-- Header Section End -->
 
 
-
-
-
-
-
-
-
-
-
-<!-- <div class="container-fluid bg-transparent">
-    <div class="row">
-  <nav class="navbar navbar-expand-lg navbar-light bg-light bg-transparent text-white">
-<div class="container-fluid"> -->
-  <!-- Logo -->
-  <!-- <a class="navbar-brand text-white fs-4 fw-bold" href="/">Mini Cam</a> -->
-
-  <!-- Toggler Button -->
-  <!-- <button class="navbar-toggler bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button> -->
-
-  <!-- Navigation Items -->
-  <!-- <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-    <ul class="navbar-nav ms-auto">
-      <li class="nav-item">
-        <a class="nav-link text-white" href="/">Home</a>
-      </li>
-      <div class="dropdown">
-        <a class="btn btn-transperand dropdown-toggle" href=""  data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="bi bi-person-circle me-2"></i>Category
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-profile">
-         
-        </ul>
-      </div> 
-      <li class="nav-item">
-        <a class="nav-link text-white" href="#">About</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-white" href="#">Services</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-white" href="#">Contact</a>
-      </li>
-    </ul> -->
-    
-    <!-- Login Field -->
-    <!-- <div class="d-flex ms-auto">
-      <div class="">
-        <ul class="navbar-nav"> -->
-          <!-- <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-primary" type="submit">Search</button>
-          </form> -->
-          <!-- <% if(isUser){%> -->
-            <!-- <li class="nav-item"><a href="cart" class="nav-link text-white fa fa-cart-shopping"> -->
-              
-            <!-- </a></li>
-           
-            <div class="dropdown">
-              <a class="btn btn-transperand dropdown-toggle" href="#" role="button" id="user-profile" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-circle me-2"></i> <%=isUser.name %>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-profile">
-                <li><label for="">Wallet ₹ : <%=isUser.wallet %></label></li>
-                <hr>
-                <li><a class="dropdown-item" href="/profile">My Profile</a></li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="/logout">Log Out</a></li>
-              </ul>
-            </div>                         -->
-            <!-- <% }else{%> -->
-              <!-- <li class="nav-item"><a class="nav-link text-white" href="/login">Login</a></li> -->
-           <!-- <% } %> -->
-        <!-- </ul>
-      </div>
-    </div>
-  </div>
-
-</div>
-</nav>
-
-  <nav class="navbar navbar-expand-lg navbar-light bg-light bg-transparent text-white"> -->
-  <!-- Logo -->
-
-  <!-- <a class="navbar-brand text-white bg-black navPadding" href="#">Mini Cam</a> -->
-
-  <!-- Search Bar -->
-
-  <!-- <form class="row domain-search ms-3">
-                  <div class="input-group d-flex p-0">
-                      <label class="text-secondary" for="">All Categories</label>
-                      <input type="search" class="form-control">
-                      <span class="input-group-addon"><input type="submit" value="Search" class="btn"></span>
-                  </div>
-  </form> -->
-    
-    <!-- Login Field -->
-    <!-- <div class="d-flex ms-auto">
-      <div class="">
-        <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link text-white" href="#">abcd</a></li>
-          <li><a class="nav-item nav-link text-white" href="#">efg</a></li>
-        </ul>
-      </div>
-    </div> -->
-  
-<!-- </nav>
-
-</div> -->

@@ -50,7 +50,12 @@ userRouter.post('/verify-payment',auth.isUserLogin,orderController.verifyPayment
 userRouter.get('/cance-order',auth.isUserLogin,orderController.cancelOrder)
 userRouter.post('/add-coupon/:id',auth.isUserLogin,orderController.addcoupon)
 userRouter.get('/orderStatus',auth.isUserLogin,orderController.orderStatus)
-userRouter.get('/returnOrder',auth.isUserLogin,orderController.returnOrder)
+userRouter.post('/returnOrder',auth.isUserLogin,orderController.returnOrder)
+userRouter.get('/wishlist',auth.isUserLogin,cartController.wishlist)
+userRouter.get('/addtowishlist',auth.isUserLogin,cartController.addtowishlist)
+userRouter.get('/removewishlist',auth.isUserLogin,cartController.removewishlist)
+userRouter.post('/shopFilter',userController.filterProducts )
+
  
 
 

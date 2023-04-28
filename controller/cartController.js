@@ -166,7 +166,7 @@ const increment = async (req, res, next) => {
             }).reduce((total, value) => {
                 return total = total + value
             }, 0)
-
+            console.log(subtotal);
             await Cart.updateOne({ user: user_id }, { $set: { total:Number(subtotal) } })
             res.json({ quantity, totalprice, ProductID, subtotal })
         }
@@ -190,7 +190,6 @@ const removeCartItem = async(req,res)=>{
                },
                $inc:{
                 total:-proData.price,
-                grandTotal:-proData.price
                }
             })
             res.json({removeProduct:true})
@@ -204,58 +203,51 @@ const wishlist = async(req,res)=>{
 
     try{
         const category = await Category.find({is_deleted:0})
-        const isUser = req.session.user_id 
-        const items = await User.findOne({_id:session}).populate('wishlist');  
+        let isUser = req.session.user_id
+        const items = await User.findOne({_id:isUser}).populate('wishlist');  
+        isUser = items
         if(!wishlist){
-            res.render('wishlist',{items:[],isUser,category});
+            res.render('users/wishlist',{items,isUser,category});
             return;
         }
-        res.render('wishlist',{items,isUser,category});
+        res.render('users/wishlist',{items,isUser,category});
 
     }
     catch (error){
-        console.log(error.message)
+        console.log(error)
     }
 
 }
 
 const addtowishlist = async(req,res)=>{
-    if(req.session.user_id){
-        const productid = req.query.id
-        const userId = req.session.user_id
-        console.log(productid);
         try{
+            const productid = req.query.id
+            const userId = req.session.user_id
             const user = await User.findById({_id:userId})
             if(user.wishlist.includes(productid)){
                res.redirect('/wishlist')
             }
-
             user.wishlist.push(productid)
             await user.save()
             res.redirect('/wishlist')
-
+    
         }
         catch (error){
-            console.log(error.message);
-            return res
-            .status(500)
-            .json({message:"server error"});
+            console.log(error);
 
         }
-    }else{
-        res.redirect('/login');
-    }
 
 }
 
 const removewishlist = async(req,res)=>{
+    console.log("hi");
     try{
         const productid = req.query.id
-        const session = req.session.user_id
-        const user = await User.findById({_id:session})
-        console.log(user);
+        const isUser = req.session.user_id
+        const user = await User.findById({_id:isUser})
         user.wishlist.pull(productid);
         await user.save()
+        console.log(user);
         res.redirect('/wishlist');
 
     }
@@ -270,4 +262,7 @@ module.exports = {
     decrement,
     increment,
     removeCartItem,
+    wishlist,
+    addtowishlist,
+    removewishlist,
 }

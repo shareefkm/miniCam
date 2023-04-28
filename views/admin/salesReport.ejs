@@ -1,77 +1,100 @@
 
 <%- include('../partials/adminHeader.ejs')-%>
 
-<div class="container">
-    <div class="table-wrapper">
-        <div class="table-title">
-            <div class="row">
-                <div class="col-sm-4">
-                    <h2>Order <b>Details</b></h2>
-                </div>
-                <div class="col-sm-8">
-                    <button type="button" class="btn-dark" onclick="return ExportToExcel()" ><i class="material-icons">Export to Excel</i> </button>
-                    <button type="button" class="btn-dark" onclick="return printTable()" ><i class="material-icons">Print</i> </button>
-                </div>
-            </div>
+<section class="content">
+    <div class="body_scroll">
+      <div class="block-header">
+        <div class="row">
+          <div class="col-lg-7 col-md-6 col-sm-12">
+          </div>
         </div>
-        <div class="table-filter">
-            <div class="row">
-                <form id="sales-filter">
-                    <label for="filter">Filter by:</label>
-                    <select id="filter" name="filter">
-                      <option value="all">All Time</option>
-                      <option value="weekly">This Week</option>
-                      <option value="yearly">This Year</option>
-                    </select>
-                    <button type="submit">Generate Report</button>
+      </div>
+      <div class="container-fluid">
+        <div class="row clearfix">
+          <div class="col-lg-3 col-md-6 col-sm-6 col-6 text-center">
+            <div class="card"></div>
+          </div>
+        </div>
+        <!-- table order  -->
+        <div class="row clearfix">
+          <div class="col-sm-12 col-md-12 col-lg-12">
+            <div class="card">
+              <div class="header">
+                <h2><strong>SALES </strong>REPORT</h2>
+              </div>
+  
+  
+              <div class="row clearfix">
+  
+                <div class="col-md-10">
+                  <form action="/admin/salesReport" method="get" onsubmit="return submit(event)">
+                    <label for="start-date">Start Date:</label>
+                    <input type="date" id="start-date" name="startDate">
+                  
+                    <label for="end-date">End Date:</label>
+                    <input type="date" id="end-date" name="endDate">
+                  
+                    <button type="submit">Search</button>
                   </form>
+                  
+                </div>
+                
+                <button class="btn btn-success btn-lg" id="download-pdf">Download</button>
+                
+                  <div class="col-sm-12 col-md-12 col-lg-12">
+                      <div  class="table-responsive">
+                          <table id="tableData" class="table table-hover c_table">
+                            <thead>
+                              <tr>
+                                <th scope="col">Customer name</th>
+                                <th scope="col">Order date</th>                         
+                                <th scope="col">Payment status</th>
+                                <th scope="col">Order status</th>
+                                <th scope="col">Delivery date</th>
+                                <th scope="col">Amount</th>             
+                              </tr>
+                            </thead>
+                            <% salesReport.forEach((order)=>{%>
+                              <tr class="clickable-row" data-href="/admin/orderedProduct/<%=order._id%>">                         
+                                  <td><%=order.address[0].firstname  %></td>
+                                  <td><%=order.start_date.toDateString()  %></td>
+                                  <td><%=order.paymentStatus  %></td>
+                                  <td><%=order.orderStatus  %></td>
+                                  <td><%=order.delivered_date.toDateString()  %></td>
+                                  <td><span>&#8377 </span><%=order.grandTotal  %></td>         
+              </div>
             </div>
-        </div>
-  <div class="tm-block tm-block-taller tm-block-scroll">
-    <table class="table" id="salesTable">
-      <thead>
-          <tr>
-              <th>#</th>
-              <th>Customer</th>
-  <th>Location</th>
-  <th>Order Date</th>						
-  <th>Net Amount</th>
-          </tr>
-      </thead>
-      <tbody>       
-          <%if(sales!=0){%>
-              <%let i=1%>
-              <%sales.forEach((sales,index) => {%>
-                  <tr>
-                     
-                      <td><%=index+1%></td>
-                      <td><%=sales.userId.username%></td>
-                      <td><%=sales.location%></td>
-                      <td><%=sales.date.toDateString()%></td>                        
-                      <td><%=sales.totalSales%></td>
-                  </tr>
-                  <%i++%>
-              <%})%>
-              
-              <%}else{%>
-                  <tr>
-                      <td>null</td>
-                  </tr>
-                  <%}%>
+          </div>                              
+                                  </td>
           
-      </tbody>
-  </table>
-  </div>
-        
-        <div class="clearfix">
-            <ul class="pagination">
-              <!-- <%for(let j=1;j<=totalPages;j++){%>
-                <li class="page-item"><a href="?page=<%=j%>" class="page-link"><%=j%></a></li>
-               <%}%> -->
-            </ul>
+                              </tr>
+          
+                              <%  
+          
+                            }) %>
+                              
+                         
+                          </table>
+          
+                        </div>
+  
+      
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
+  </section>
+  
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+  <script>
+  document.getElementById("download-pdf").addEventListener("click", () => {
+    const element = document.getElementById("tableData"); 
+    html2pdf().from(element).save();
+  });
+  
+  </script
 
 
 <%- include('../partials/adminFooter.ejs')-%>

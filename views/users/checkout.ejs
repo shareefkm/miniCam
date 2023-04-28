@@ -12,8 +12,7 @@
 
     <div class="container">
   <div class="row text-center">
-      <h2>Checkout</h2>
-      <hr>
+      
   </div>
   <div class="row">
       <div class="col-md-8">
@@ -146,7 +145,6 @@
 
   function applyCoupon() {
                     const couponCode = document.getElementById("code").value;
-                    alert(couponCode)
                     if (couponCode != "") {
                         $.ajax({
                             url: '/add-coupon/' + couponCode,
@@ -160,7 +158,6 @@
                                         customClass: "swal-wide",
                                         showConfirmButton: true,
                                     });
-                                    // alert('Coupon Added')
                                     location.reload()
                                 } else if (response.exist) {
                                     Swal.fire({
@@ -207,22 +204,18 @@
                                     customClass: "swal-wide",
                                     showConfirmButton: true,
                                 });
-                              // console.log(response);
-                              //   alert('order success')
+                              
                                 window.location.href = '/orderDetails'
                             } else if(response.noSelect){
-                                // alert("select payment method option")
                                 Swal.fire({
                                     position: "center",
                                     icon: "error",
-                                    title: "You are not selecting option",
+                                    title: "Please select Payment Method",
                                     customClass: "swal-wide",
                                     showConfirmButton: true,
                                 });
-                                window.location.href = '/checkout'
                             } else if (response.zeroWallet) {
-                              // console.log(response.zeroWallet);
-                              //   alert("No balance in your wallet")
+                              
                               Swal.fire({
                                     position: "center",
                                     icon: "error",
@@ -232,7 +225,6 @@
                                 });
                             } else {
                                 if (response.order == null) {
-                                    // alert('Something Wrong Please Try Again!')
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Something Wrong',
@@ -250,7 +242,7 @@
 
                 function razorpayPayment(payment) {
       let options = {
-    "key": "rzp_test_dCipjxzSRdIN7F", // Enter the Key ID generated from the Dashboard
+    "key": "rzp_test_dCipjxzSRdIN7F", 
     "amount": payment.order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
     "currency": "INR",
     "name": "Acme Corp",
@@ -259,9 +251,7 @@
     "order_id":payment.order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
     "handler": function (response){
       verifyPayment(response, payment)
-        // alert(response.razorpay_payment_id);
-        // alert(response.razorpay_order_id);
-        // alert(response.razorpay_signature)
+  
     },
     "prefill": {
         "name": "Gaurav Kumar",
@@ -277,15 +267,7 @@
 };
 var rzp1 = new Razorpay(options);
 rzp1.open();
-// rzp1.on('payment.failed', function (response){
-//         alert(response.error.code);
-//         alert(response.error.description);
-//         alert(response.error.source);
-//         alert(response.error.step);
-//         alert(response.error.reason);
-//         alert(response.error.metadata.order_id);
-//         alert(response.error.metadata.payment_id);       
-// });
+
 }
   function verifyPayment(payment,order) {
                     $.ajax({

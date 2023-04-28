@@ -1,5 +1,6 @@
 
 <%- include('../partials/userHeader.ejs')-%>
+<% if(catProduct){%>
 <% if(catProduct.products.length>0){
     for(let i = 0 ; i<catProduct.products.length; i++){%>
     <div class="container mt-5">
@@ -12,26 +13,15 @@
             <p><%=catProduct.products[i].description%></p>
             <p>₹ <%=catProduct.products[i].price%></p>
             <button onclick="addToCart('<%=catProduct.products[i]._id%>')" class="btn btn-primary">Add To Cart</button>
+            <a href="/addtowishlist?id=<%=catProduct.products[i]._id%>"><img src="images/icon/heart.png" alt=""></a>
           </div>
         </div>
       </div>
 <% }
     }else{%>
-    <p>Product Not Found</p>
+    <p>Product Not Available</p>
 <% } %>
+
+<%} %>
   
 <%- include('../partials/userFooter.ejs')-%>
-
-<script>
-         function addToCart(proId){
-            $.ajax({
-                url:'/addcart/'+proId,
-                method:'get',
-                success:(response)=>{
-                    // alert(response)
-                    // location.reload()
-                    alert('added to cart')
-                }
-            })
-        }               
-    </script>

@@ -8,9 +8,7 @@
                     </div>
                 </div>
                   <div class="table-responsive mt-2">
-                    <% 
-                    if(adMsg){
-                      %>
+                    <% if(adMsg){%>
                       <script>
                         Swal.fire('<%=adMsg%>')
                         </script>
@@ -52,16 +50,19 @@
                                             </td>
                                           </tr>       
                                           <% } %>
-                                    <% }else{%><tr>
-                                              <td colspan="5">Category Not fount</td>
-                                              </tr><%} %>
-                                              </tbody>
-                                              </table>
-                    </div>
-                    
-              </div>
-        </div>
-    </div>
-</div>
-<%- include('../partials/adminFooter.ejs')-%>
+                                    <% }else{%>
+                                      <tr>
+                                        <td colspan="5">Product not found</td>
+                                      </tr>
+                                      <%} %>
+                                    </tbody>
+                                </table>
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+
+
 <script>$(document).ready( function () {$('#product').DataTable();});</script>
+<%- include('../partials/adminFooter.ejs')-%>

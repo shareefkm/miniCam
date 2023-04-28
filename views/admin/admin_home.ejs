@@ -1,13 +1,88 @@
 
 <%- include('../partials/adminHeader.ejs')-%>
-          
+
 <div class="container">
+
+<!-- Sale & Revenue Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="row">
+      <div class="col-sm-6 col-xl-4">
+        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+          <i class="fa fa-chart-line fa-3x text-primary"></i>
+          <div class="ms-3">
+            <p class="mb-0">Total Revenue</p>
+            <% if(totalSale.length > 0){%>
+            <h6 class="mb-0">₹ <%= totalSale[0].total %></h6>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xl-4">
+        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+          <i class="fa fa-chart-bar fa-3x text-primary"></i>
+          <div class="ms-3">
+            <p class="mb-0">Total Orders</p>
+            <% if(totalOrders.length > 0){%>
+            <h6 class="mb-0"><%= totalOrders[0].total %></h6>
+            <%  } %>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xl-4">
+        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+          <i class="fa fa-user fa-3x text-primary"></i>
+          <div class="ms-3">
+            <p class="mb-0">Total Users</p>
+            <% if(totalUsers.length > 0){%>
+            <h6 class="mb-0"><%= totalUsers[0].total %></h6>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+            <!-- Sale & Revenue End -->
+          
             <!-- row -->
-            <div class="row tm-content-row">
+            <div class="row tm-content-row mt-3">
+                <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
+                    <div class="tm-bg-primary-dark tm-block">
+                        <h2 class="tm-block-title">Monthly Sales</h2>
+                        <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+                            <input type="hidden" id="input1" value="<%=yearChart[0]%>">
+                            <input type="hidden" id="input2" value="<%=yearChart[1]%>">
+                            <input type="hidden" id="input3" value="<%=yearChart[2]%>">
+                            <input type="hidden" id="input4" value="<%=yearChart[3]%>">
+                            <input type="hidden" id="input5" value="<%=yearChart[4]%>">
+                            <input type="hidden" id="input6" value="<%=yearChart[5]%>">
+                            <input type="hidden" id="input7" value="<%=yearChart[6]%>">
+                            <input type="hidden" id="input8" value="<%=yearChart[7]%>">
+                            <input type="hidden" id="input9" value="<%=yearChart[8]%>">
+                            <input type="hidden" id="input10" value="<%=yearChart[9]%>">
+                            <input type="hidden" id="input11" value="<%=yearChart[10]%>">
+                            <input type="hidden" id="input12" value="<%=yearChart[11]%>">
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col mt-0">
+                        <h2 class="tm-block-title">Orders</h2>
+                        <canvas id="pieChart" style="width:100%;max-width:400px"></canvas>
+                        <% saleChart.forEach((value) => {  %>
+                          <%  if(value._id == "wallet"){ %>
+                                <input type="hidden" value="<%= value.total %>" id="value"><% } %>
+                          <%  if(value._id == "COD"){ %>
+                                <input type="hidden" value="<%= value.total %>" id="value1">
+                            <% }else { %>
+                                <input type="hidden" value="<%= value.total %>" id="value2">
+                        <% }}) %>
+                </div>
+
                 <div class="col-12 tm-block-col">
                     <div class="tm-bg-primary-dark tm-block tm-block-taller tm-block-scroll">
                         <h2 class="tm-block-title">Orders List</h2>
-                        <table class="table">
+                        <table class="table" id="myTable">
                                 <thead>
                                     <tr>
                                         <th scope="col">ORDER NO.</th>
@@ -34,36 +109,21 @@
                                         </a>
                                             <a <% if(element.orderStatus !== 'Cancelled' && element.is_delivered == false) {%> href="/admin/cancelOrder?orderid=<%=element._id%>" <% }%> 
                                               class="btn btn-danger rounded-pill d-flex align-items-center justify-content-center" style="height: 30px; width: 90px;" ><% if(element.orderStatus == 'Cancelled') {%> Cancelled <% } else{%> Cancel <% } %></a>
-                                              
-                                              <a <% if(element.is_delivered == false && element.admin_cancelled == false && element.user_cancelled == false) {%> href="/admin/orderStatus?orderId=<%=element._id%>" <% }%>  class="btn btn-warning rounded-pill d-flex align-items-center justify-content-center" style="height: 30px; width: 90px;"
-                                                ><% if(element.is_delivered == true ) {%> Delivered <% } else{%> pending <% } %></a>
+                                              <% if(element.orderStatus == 'returned'){%> 
+                                                <% if(element.paymentStatus == 'refund success'){%>
+                                                    <a  href=""  class="btn btn-warning rounded-pill d-flex align-items-center justify-content-center" style="height: 30px; width: 90px;"
+                                                      >Refunded</a>
+                                               <% }else{%>
+                                                <a  href="/admin/returnConfirm?orderId=<%=element._id%>"  class="btn btn-warning rounded-pill d-flex align-items-center justify-content-center" style="height: 30px; width: 90px;"
+                                                  >Return</a>
+                                              <% } %>
+                                                <%}else{%>
+                                                    <a <% if(element.is_delivered == false && element.admin_cancelled == false && element.user_cancelled == false) {%> href="/admin/orderStatus?orderId=<%=element._id%>" <% }%>  class="btn btn-warning rounded-pill d-flex align-items-center justify-content-center" style="height: 30px; width: 90px;"
+                                                      ><% if(element.is_delivered == true) {%> Delivered <% } else{%> pending <% } %></a>
+                                                    <%} %>
                                           </div>
                                         </td>
                                     </tr>
-                                    <!-- <tr>
-                                        <th scope="row"><b>#122348</b></th>
-                                        <td>
-                                            <div class="tm-status-circle pending">
-                                            </div>Pending
-                                        </td>
-                                        <td><b>Jacob Miller</b></td>
-                                        <td><b>London, UK</b></td>
-                                        <td><b>360 km</b></td>
-                                        <td>11:00, 10 NOV 2018</td>
-                                        <td>04:00, 14 NOV 2018</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row"><b>#122347</b></th>
-                                        <td>
-                                            <div class="tm-status-circle cancelled">
-                                            </div>Cancelled
-                                        </td>
-                                        <td><b>George Wilson</b></td>
-                                        <td><b>London, UK</b></td>
-                                        <td><b>340 km</b></td>
-                                        <td>12:00, 22 NOV 2018</td>
-                                        <td>06:00, 28 NOV 2018</td>
-                                    </tr> -->
                                     
                                     <%  }); %>
                                 </tbody>
@@ -74,5 +134,83 @@
                 </div>
             </div>
         </div>
+
+        <script>
+    const ctx = document.getElementById('myChart');
+    const input1 = Number(document.getElementById('input1').value)
+    const input2 = Number(document.getElementById('input2').value)
+    const input3 = Number(document.getElementById('input3').value)
+    const input4 = Number(document.getElementById('input4').value)
+    const input5 = Number(document.getElementById('input5').value)
+    const input6 = Number(document.getElementById('input6').value)
+    const input7 = Number(document.getElementById('input7').value)
+    const input8 = Number(document.getElementById('input8').value)
+    const input9 = Number(document.getElementById('input9').value)
+    const input10 = Number(document.getElementById('input10').value)
+    const input11 = Number(document.getElementById('input11').value)
+    const input12 = Number(document.getElementById('input12').value)
+    new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June','July','Aug','Sep','Oct','Nov','Dec'],
+       datasets: [{
+    label: 'Monthly Sales',
+    data: [input1,input2,input3,input4,input5,input6,input7,input8,input9,input10,input11,input12],
+    backgroundColor: [
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(255, 159, 64, 0.2)',
+      'rgba(255, 205, 86, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(54, 162, 235, 0.2)',
+      'rgba(153, 102, 255, 0.2)',
+      'rgba(201, 203, 207, 0.2)'
+    ],
+    borderColor: [
+      'rgb(255, 99, 132)',
+      'rgb(255, 159, 64)',
+      'rgb(255, 205, 86)',
+      'rgb(75, 192, 192)',
+      'rgb(54, 162, 235)',
+      'rgb(153, 102, 255)',
+      'rgb(201, 203, 207)'
+    ],
+    borderWidth: 1
+  }]
+}
+  
+  });
+
+
+
+  const piechart = document.getElementById('pieChart');
+    const wallet = parseInt(document.getElementById('value').value) 
+    const cod = parseInt(document.getElementById('value1').value) 
+    const online = parseInt(document.getElementById('value2').value) 
+    new Chart(piechart, {
+    type: 'pie',
+    data: {
+        labels: [
+            'COD',
+            'Online',
+            'wallet'
+        ],
+        datasets: [{
+            label: 'My First Dataset',
+            data: [cod, online,wallet],
+            backgroundColor: [
+            'rgb(255, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(255, 205, 86)'
+            ],
+            hoverOffset: 4
+        }]
+        }
+    });
+
+
+            $(document).ready(function() {
+  $('#myTable').DataTable();
+});
+        </script>
 
         <%- include('../partials/adminFooter.ejs')-%>

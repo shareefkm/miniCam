@@ -1,4 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
 
+  <!-- Bootstrap -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.1.1/dist/darkly/bootstrap.min.css">
+		<!-- Style Sheet -->
+    <link type="text/css" rel="stylesheet" href="css/styleCam.css"/>
+
+</head>
+<body>
 <section class="h-100 h-custom bg-black otpLog">
     <div class="container py-5 h-100">
       <div class="row d-flex justify-content-center align-items-center h-100">
@@ -11,15 +26,15 @@
   
                 <div class="form-outline mb-4">
                   <label class="form-label" for="form3Example1q">Enter OTP Number</label>
-                    <input type="text" id="form3Example1q" class="form-control" name="otp" required/>
+                    <input type="text" id="form3Example1q" class="form-control rounded-pill" placeholder="Enter otp" name="otp" required/>
                   </div>
-                <button type="submit" class="btn btn-success btn-block ms-3 mt-3">
+                <button type="submit" class="btn btn-success btn-block ms-3 mt-3 rounded-pill">
                   Verify 
                 </button>
                 <button
                   type="button"
                   id="resend-otp"
-                  class="btn btn-link btn-block mt-4" 
+                  class="btn btn-link btn-block mt-4 " 
                 >
                  Resend OTP
                 </button>
@@ -32,39 +47,45 @@
       </div>
     </div>
   </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <script src="js/m_script.js"></script>
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-  $(document).ready(() => {
-    const resendOtpButton = $('#resend-otp');
-    let countdown = 10;
-
-    resendOtpButton.on('click', () => {
-      resendOtpButton.prop('disabled', true);
-
-      $.ajax({
-        type: 'POST',
-        url: '/resendOtp',
-        success: () => {
-          startCountdown();
-        },
-        error: (xhr, status, error) => {
-          console.error(error);
-        },
+  <script>
+    $(document).ready(() => {
+      const resendOtpButton = $('#resend-otp');
+      let countdown = 10;
+      
+      resendOtpButton.on('click', () => {
+        resendOtpButton.prop('disabled', true);
+        
+        $.ajax({
+          type: 'POST',
+          url: '/resendOtp',
+          success: () => {
+            startCountdown();
+          },
+          error: (xhr, status, error) => {
+            console.error(error);
+          },
+        });
       });
+      
+      function startCountdown() {
+        const countdownInterval = setInterval(() => {
+          if (countdown > 0) {
+            countdown--;
+            resendOtpButton.html(`Resend OTP (${countdown})`);
+          } else {
+            clearInterval(countdownInterval);
+            resendOtpButton.html('Resend OTP');
+            resendOtpButton.prop('disabled', false);
+            countdown = 10;
+          }
+        }, 1000);
+      }
     });
-
-    function startCountdown() {
-      const countdownInterval = setInterval(() => {
-        if (countdown > 0) {
-          countdown--;
-          resendOtpButton.html(`Resend OTP (${countdown})`);
-        } else {
-          clearInterval(countdownInterval);
-          resendOtpButton.html('Resend OTP');
-          resendOtpButton.prop('disabled', false);
-          countdown = 10;
-        }
-      }, 1000);
-    }
-  });
-</script>
+  </script>
+</body>
+</html>

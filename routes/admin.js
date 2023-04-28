@@ -46,10 +46,16 @@ adminRouter.post('/editCoupon',auth.isAdminLogin,adminHelpers.editCoupon)
 adminRouter.get('/deleteCoupon',auth.isAdminLogin,adminHelpers.deleteCoupon)
 adminRouter.get('/orderStatus', auth.isAdminLogin, adminHelpers.orderDelivered);
 adminRouter.get('/cancelOrder',auth.isAdminLogin,adminHelpers.cancelOrder)
-adminRouter.get('/salesReport',auth.isAdminLogin,adminHelpers.getSalesReport)
+adminRouter.get('/salesReport',auth.isAdminLogin,adminHelpers.salesReport)
 adminRouter.get('/vieworder',auth.isAdminLogin,adminHelpers.getOrderView)
-// adminRouter.get('*',(req,res)=>{
-//     res.redirect('/admin')
-// })    
-// salesReport
+adminRouter.get('/banner',auth.isAdminLogin,adminHelpers.adminBanner)
+adminRouter.get('/addbanner',auth.isAdminLogin,adminHelpers.addBanner)
+adminRouter.post('/addbanner',upload.single('image'),auth.isAdminLogin,adminHelpers.doaddBanner)
+adminRouter.get('/editbanner',auth.isAdminLogin,adminHelpers.editBanner)
+adminRouter.post('/editbanner',upload.single('image'),auth.isAdminLogin,adminHelpers.doEditBanner)
+adminRouter.get('/deletebanner',auth.isAdminLogin,adminHelpers.deleteBanner)
+adminRouter.get('/returnConfirm',auth.isAdminLogin,adminHelpers.returnConfirm)
+adminRouter.get('*',(req,res)=>{
+    res.redirect('/admin')
+})    
 module.exports = adminRouter;   

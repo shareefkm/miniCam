@@ -30,11 +30,11 @@
             <td><%=cartData.items[i].productId.name%></td>
             <td>₹: <%=cartData.items[i].productId.price%></td>
             <td>
-              <button class="quantity-btn minus bg-transparent text-white" onclick="decrement('<%=cartData.items[i].productId._id%>')">-</button>
-              <span class="quantity-value" id="<%=cartData.items[i].productId._id%>"><%=cartData.items[i].quantity%></span>
-              <button class="quantity-btn plus bg-transparent text-white" onclick="increment('<%=cartData.items[i].productId._id%>')">+</button>
+              <button class="quantity-btn minus bg-transparent" onclick="decrement('<%=cartData.items[i].productId._id%>','<%= i %>','<%= cartData.items[i].productId.price %>')">-</button>
+              <span class="quantity-value" id="quantity<%= i %>"><%=cartData.items[i].quantity%></span>
+              <button class="quantity-btn plus bg-transparent" onclick="increment('<%=cartData.items[i].productId._id%>','<%= i %>','<%= cartData.items[i].productId.price %>')">+</button>
             </td>
-            <td><span id="price-<%=cartData.items[i].productId._id%>">₹: <%= cartData.items[i].price %></span></td>
+            <td>₹:<span id="totalpriceamount<%= i %>"><%= cartData.items[i].price %></span></td>
             <td><a class="btn btn-danger" onclick="removeProduct('<%=cartData._id%>','<%=cartData.items[i].productId._id%>')">Delete</a></td>
           </tr>
           
@@ -44,7 +44,7 @@
         <% if(cartData){%>       
           <tr>
             <th colspan="4">Subtotal</th>
-            <td>₹: <%=subtotal%></td>
+            <td>₹: <span id="totalAountSub"><%=subtotal%></span></td>
           </tr>
       <%  }else{%>
         <p>Cart Is Empty</p>
@@ -54,11 +54,11 @@
   </div>
 
   <div class="container">
-    <div class="row">
+    <div class="row mb-3">
       <div class="col-md-6">          
       </div>
-      <div class="col-md-6 text-end">
-        <a href="checkout" class="btn-info btn-block">Proceed To Checkout</a>
+      <div class="col-md-6 text-center">
+        <a href="checkout" class="btn-info btn-block rounded-pill">Proceed To Checkout</a>
       </div>
     </div>
   </div>
@@ -72,7 +72,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 <script>
 
-function increment(ID){
+function increment(ID,index,price){
         $.ajax({
             url:`/increment?id=${ID}`,
             type:'post',
@@ -81,12 +81,14 @@ function increment(ID){
              success:function(res){
                 console.log(res);
                 if(res.ProductID == ID){
-                    $(`#${ID}value`).val(`${res.quantity}`)
-                    $(`#${ID}price`).text(`₹${res.totalprice}`)
-                    $('#subtotal').text(`₹${res.subtotal}`)
-        
+                  let num= parseInt(document.getElementById(`quantity${index}`).innerHTML)
+                    document.getElementById(`quantity${index}`).innerHTML = num+1
+                  let Aprice = parseInt(price)
+                  let totalAmount = parseInt(document.getElementById("totalAountSub").innerHTML)
+                  document.getElementById("totalAountSub").innerHTML = totalAmount - (num*price) +  (num+1)*Aprice
+                  document.getElementById(`totalpriceamount${index}`).innerHTML = (num+1)*Aprice
+
                 }
-                location.reload()
              }
         })
     }
@@ -98,7 +100,7 @@ function increment(ID){
         $('.de').show()
        }
     })
-    function decrement(ID){
+    function decrement(ID,index,price){
         $.ajax({
             url:`/decrement?id=${ID}`,
             type:'post',
@@ -107,36 +109,53 @@ function increment(ID){
              success:function(res){
                 console.log(res);
                 if(res.ProductID== ID){
-                    $(`#${ID}value`).val(`${res.quantity}`)
-                    $(`#${ID}price`).text(`₹${res.totalprice}`)
-                    $('#subtotal').text(`₹${res.subtotal}`)
-                
+                   
+                  let num= parseInt(document.getElementById(`quantity${index}`).innerHTML)
+                    document.getElementById(`quantity${index}`).innerHTML = num-1
+                  let Aprice = parseInt(price)
+                  let totalAmount = parseInt(document.getElementById("totalAountSub").innerHTML)
+                  document.getElementById("totalAountSub").innerHTML = totalAmount + (num*price) -  (num+1)*Aprice
+                  document.getElementById(`totalpriceamount${index}`).innerHTML = (num-1)*Aprice
                 }
-                location.reload()       
+                      
              }
         })
     }
 
     function removeProduct(cartId,proId){
-        $.ajax({
-            url:"/removeCartItem",
-            data:{
-                cart:cartId,
-                product:proId
-            },
-            method:'post',
-            success:(response)=>{
-                // alert("Product Removed from Cart")
-                Swal.fire({
-                                    position: "center",
-                                    icon: "success",
-                                    title: " Deleted!",
-                                    customClass: "swal-wide",
-                                    showConfirmButton: true
-                                });
-                    window.location.reload()
-            }
-        })
+                    const swalWithBootstrapButtons = Swal.mixin({
+                                customClass: {
+                                    confirmButton: 'btn btn-success',
+                                    cancelButton: 'btn btn-danger'
+                                }, buttonsStyling: true
+                            })
+                            swalWithBootstrapButtons.fire({
+                                title: 'Are you sure?', text: "You won't be able to revert this!",
+                                // icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Yes', 
+                                cancelButtonText: 'No',
+                                reverseButtons: true
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $.ajax({
+                                        url:"/removeCartItem",
+                                         data:{
+                                          cart:cartId,
+                                          product:proId
+                                          },
+                                          method:'post',
+                                        encoded: true,
+                                        success: function (response) {
+                                            window.location.reload()
+                                        }
+                                    }).then(() => {
+                                        swalWithBootstrapButtons.fire('Deleted!', 'Product has been removed.', 'success')
+                                    })
+                                } else if (result.dismiss === Swal.DismissReason.cancel) { swalWithBootstrapButtons.fire('Cancelled', 'Product is not removed', 'error') }
+                            })
+            // }
+        // })
     }
 
     function applyCoupon() {
@@ -148,15 +167,15 @@ function increment(ID){
                             method: 'post',
                             success: async (response) => {
                                 if (response.success) {
-                                    // Swal.fire({
-                                    //     position: "center",
-                                    //     icon: "success",
-                                    //     title: "Coupon Added",
-                                    //     customClass: "swal-wide",
-                                    //     showConfirmButton: true,
-                                    // });
-                                    alert('Coupon Added')
-                                    location.reload()
+                                    Swal.fire({
+                                        position: "center",
+                                        icon: "success",
+                                        title: "Coupon Added",
+                                        customClass: "swal-wide",
+                                        showConfirmButton: true,
+                                    });
+                                   
+                                  
                                 } else if (response.exist) {
                                     Swal.fire({
                                         position: "center",

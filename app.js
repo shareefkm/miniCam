@@ -9,9 +9,11 @@ const layout = require('express-ejs-layouts');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const nocache = require('nocache');
-const config = require('./config/config')
+const config = require('./config/config');
+// const morgan = require('morgan');
+// app.use(morgan("tiny"));
 
-
+ 
 
 const userRouter = require('./routes/user');
 const adminRouter = require('./routes/admin')
@@ -35,7 +37,7 @@ app.use(session({
     saveUninitialized:true,
     resave:false,
     cookie:{
-        maxAge:5000000
+        maxAge:1000 * 60 * 24 * 10
     }
 }));
 app.use(nocache());
