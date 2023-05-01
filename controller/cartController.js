@@ -58,7 +58,8 @@ const addToCart = async(req,res)=>{
                 res.json({ response: "outofstock" });
             }
         }else{
-            res.redirect('/login')
+            res.json({ response: "please login" });
+
         }
     } catch (error) {
         console.log(error);
@@ -166,7 +167,6 @@ const increment = async (req, res, next) => {
             }).reduce((total, value) => {
                 return total = total + value
             }, 0)
-            console.log(subtotal);
             await Cart.updateOne({ user: user_id }, { $set: { total:Number(subtotal) } })
             res.json({ quantity, totalprice, ProductID, subtotal })
         }
@@ -240,14 +240,12 @@ const addtowishlist = async(req,res)=>{
 }
 
 const removewishlist = async(req,res)=>{
-    console.log("hi");
     try{
         const productid = req.query.id
         const isUser = req.session.user_id
         const user = await User.findById({_id:isUser})
         user.wishlist.pull(productid);
         await user.save()
-        console.log(user);
         res.redirect('/wishlist');
 
     }

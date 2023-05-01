@@ -1,8 +1,5 @@
-//connect mongoose
-const mongoose = require('mongoose');
-mongoose.connect('mongodb://127.0.0.1:27017/minimart');
-const port = 3007;
-//imports
+require('dotenv').config();
+const port = process.env.PORT;
 const express = require('express');
 const app = express();
 const layout = require('express-ejs-layouts');
@@ -10,8 +7,8 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const nocache = require('nocache');
 const config = require('./config/config');
-// const morgan = require('morgan');
-// app.use(morgan("tiny"));
+config.mongooseConnection()
+
 
  
 
@@ -33,7 +30,7 @@ app.set('view engine','ejs')
 
 app.use(cookieParser());
 app.use(session({
-    secret:config.sessionSecret,
+    secret:process.env.SESIONSECRET,
     saveUninitialized:true,
     resave:false,
     cookie:{

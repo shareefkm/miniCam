@@ -1,8 +1,12 @@
+const mongoose = require('mongoose')
+require('dotenv').config()
+function mongooseConnection(){
+    mongoose.set('strictQuery',true)
+    mongoose.connect(process.env.MONGOOSE_CONNECTION).then(()=>{
+        console.log("db connected");
+    })
+}
+
 module.exports = {
-     sessionSecret : 'sessionSecretKey',
-     verifyMail:{
-           user:'babusabu026@gmail.com',
-           pass:'lunmoameokvccufk'
-     },
-    
+    mongooseConnection
 }

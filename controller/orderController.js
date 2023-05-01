@@ -7,9 +7,11 @@ const Category = require('../models/category')
 require('dotenv').config();
 const Razorpay = require('razorpay');
 const cart = require('../models/cart');
+const order = require('../models/order');
+require('dotenv').config()
 const instance = new Razorpay({
-    key_id:'rzp_test_dCipjxzSRdIN7F',
-    key_secret:'XHWtjhusYGD6SFC4xvieFm7T',
+    key_id:process.env.KEY_ID,
+    key_secret:process.env.KEY_SECRET,
   });
 let isUser;
 let message;
@@ -129,6 +131,7 @@ const addCheckout = async(req,res)=>{
                         }
                         res.json({ order, user })
                     })
+                    
                 } 
                 else {
                     let options = {
@@ -185,7 +188,7 @@ const addCheckout = async(req,res)=>{
                         await Cart.deleteOne({ user: userId })
                         if (walletAmount < grandTotal) {
                             const balancePayment = grandTotal - walletAmount
-                            orderId = newOrder._id.valueOf()
+                            let orderId = newOrder._id.valueOf()
                             let options = {
                                 amount: balancePayment * 100,
                                 currency: "INR",
@@ -246,7 +249,7 @@ const verifyPayment = async(req,res)=>{
             })
                 await Cart.deleteOne({ user: userId })
             const crypto = require('crypto')
-            let hmac = crypto.createHmac('sha256', 'XHWtjhusYGD6SFC4xvieFm7T')
+            let hmac = crypto.createHmac('sha256', process.env.KEY_SECRET)
             hmac.update(details.payment.razorpay_order_id + '|' + details.payment.razorpay_payment_id)
             hmac = hmac.digest('hex')
             let walletAmount = await User.findOne({ _id: userId })

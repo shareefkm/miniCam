@@ -6,17 +6,9 @@ const Product = require('../models/product_model');
 const Cart = require('../models/cart')
 const Orders = require('../models/order')
 const Banner = require('../models/banner')
-
-
-const accountsid = 'ACb1519db06c6dd72a55fa6dc93582f0a9';
-const authtoken ='7666c9d7035d5485c7b7c2b7a6fbe7a6';
-const TWILIO_SERVICE_SID = "VA753089dcf16fb79febc5566541f02c97";
-const client = require("twilio")(accountsid, authtoken);
-
+require('dotenv').config()
+const client = require("twilio")(process.env.ACCOUNTSID, process.env.AUTHTOKEN);
 const auth = require('../middleware/auth');
-const config = require('../config/config');
-// const Lookups = require('twilio/lib/rest/Lookups');
-
 
 let message;
 let isUser;
@@ -115,7 +107,7 @@ const insertUser = async(req,res)=>{
             }else{
                 res.redirect('/signup')
                 message = "Phone Number Allrery Exists"
-            }
+            } 
         }else{
             res.redirect('/signup')
             message = "Email Allrery Exists"
@@ -137,16 +129,17 @@ const verifyMail = async(req,res)=>{
 //send verifymail
 const sendVerifyMail = async(name,email,user_id)=>{
     try {
+        console.log(process.env.USER,process.env.PASS,process.env.SESIONSECRET);
         const transporter = nodeMailer.createTransport({
             host:'smtp.gmail.com',
             port:587,
             secure:false,
             requireTLS:true,
             auth:{
-                user:config.verifyMail.user,
-                pass:config.verifyMail.pass
+                user:process.env.USER,
+                pass:process.env.PASS
             }
-        });
+        }); 
         const mailOptions = {
             from:'babusabu026@gmail.com',
             to:email,
@@ -155,7 +148,7 @@ const sendVerifyMail = async(name,email,user_id)=>{
         }
         transporter.sendMail(mailOptions,(err,info)=>{
             if(err){
-                console.log(err);
+                console.log(err,'==================================');
             }else{
                 console.log("verify success:"+info.response);
             }
@@ -229,7 +222,7 @@ const postRequest = async(req, res) => {
             if(user){
                 if(user.is_blocked == 0){
                     const verification = await client.verify
-                    .services(TWILIO_SERVICE_SID)
+                    .services(process.env.TWILIO_SERVICE_SID)
                     .verifications.create({ to: `+91${phone}`, channel: "sms" });
                     res.redirect('/mobileotp');
                 }else{
@@ -246,7 +239,7 @@ const resendOTP = async (req, res) => {
     const { phone } = req.session;
     try {
       const verification = await client.verify
-        .services(TWILIO_SERVICE_SID)
+        .services(process.env.TWILIO_SERVICE_SID)
         .verifications.create({ to: `+91${phone}`, channel: "sms" });
       res.sendStatus(200);
     } catch (err) {
@@ -263,7 +256,7 @@ const phone = req.session.phone
     console.log(otp);
     try {
         const verification_check = await client.verify
-          .v2.services(TWILIO_SERVICE_SID)
+          .v2.services(process.env.TWILIO_SERVICE_SID)
           .verificationChecks.create({ to: `+91${phone}`, code: otp });
       
         if (verification_check.status === "approved") {
