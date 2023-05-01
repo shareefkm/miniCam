@@ -106,11 +106,11 @@ const insertUser = async(req,res)=>{
                 }
             }else{
                 res.redirect('/signup')
-                message = "Phone Number Allrery Exists"
+                message = "Phone Number Allredy Exists"
             } 
         }else{
             res.redirect('/signup')
-            message = "Email Allrery Exists"
+            message = "Email Allredy Exists"
         }
     } catch (error) {
         console.log(error.message); 
@@ -133,8 +133,7 @@ const sendVerifyMail = async(name,email,user_id)=>{
         const transporter = nodeMailer.createTransport({
             host:'smtp.gmail.com',
             port:587,
-            secure:false,
-            requireTLS:true,
+            secure:true,
             auth:{
                 user:process.env.USER,
                 pass:process.env.PASS
@@ -148,7 +147,7 @@ const sendVerifyMail = async(name,email,user_id)=>{
         }
         transporter.sendMail(mailOptions,(err,info)=>{
             if(err){
-                console.log(err,'==================================');
+                console.log(err,'=================================');
             }else{
                 console.log("verify success:"+info.response);
             }
