@@ -68,8 +68,8 @@
 
 <%- include('../partials/userFooter.ejs')-%>
 
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+// <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+// <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 <script>
 
 function increment(ID,index,price){
@@ -88,6 +88,13 @@ function increment(ID,index,price){
                   document.getElementById("totalAountSub").innerHTML = totalAmount - (num*price) +  (num+1)*Aprice
                   document.getElementById(`totalpriceamount${index}`).innerHTML = (num+1)*Aprice
 
+                }else{
+                  new swal({  
+            title: " Oops!",  
+            text: res.message, 
+            icon: "error",  
+            button: "oh no!",  
+            }); 
                 }
              }
         })
@@ -108,8 +115,7 @@ function increment(ID,index,price){
              dataType:'json',
              success:function(res){
                 console.log(res);
-                if(res.ProductID== ID){
-                   
+                if(res.ProductID== ID){  
                   let num= parseInt(document.getElementById(`quantity${index}`).innerHTML)
                     document.getElementById(`quantity${index}`).innerHTML = num-1
                   let Aprice = parseInt(price)
@@ -131,7 +137,6 @@ function increment(ID,index,price){
                             })
                             swalWithBootstrapButtons.fire({
                                 title: 'Are you sure?', text: "You won't be able to revert this!",
-                                // icon: 'warning',
                                 showCancelButton: true,
                                 confirmButtonText: 'Yes', 
                                 cancelButtonText: 'No',

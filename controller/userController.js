@@ -129,7 +129,6 @@ const verifyMail = async(req,res)=>{
 //send verifymail
 const sendVerifyMail = async(name,email,user_id)=>{
     try {
-        console.log(process.env.USER_MAIL,process.env.PASS,process.env.SESIONSECRET + 'llllllllll');
         const transporter = nodeMailer.createTransport({
             host:'smtp.gmail.com',
             port:465,
@@ -147,7 +146,7 @@ const sendVerifyMail = async(name,email,user_id)=>{
         }
         transporter.sendMail(mailOptions,(err,info)=>{
             if(err){
-                console.log(err,'=================================');
+                console.log(err);
             }else{
                 console.log("verify success:"+info.response);
             }

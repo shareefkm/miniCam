@@ -13,7 +13,8 @@ const addToCart = async(req,res)=>{
             const proId = req.params.id;
             const prodData = await Product.findOne({_id:proId});
             const userCart  = await Cart.findOne({user:userId});
-            if(prodData.stock >0){                    
+            if(prodData.stock >0){
+                                    
                 if(userCart){
                     const proExist = userCart.items.findIndex(items=>items.productId == proId)
                     if(proExist!=-1){
@@ -58,7 +59,7 @@ const addToCart = async(req,res)=>{
                 res.json({ response: "outofstock" });
             }
         }else{
-            res.json({ response: "please login" });
+            res.json({response: "please login" });
 
         }
     } catch (error) {
@@ -143,8 +144,8 @@ const increment = async (req, res, next) => {
             return value.productId == ProductID
         })
         if (productData.stock <= cartProductDatial[0].quantity) {
-            message = "Maximum Stock Done"
-            res.json({ outOfStock: true })
+            
+            res.json({ outOfStock: true , message : "Maximum Stock Done"})
         } else {
 
             await Cart.updateOne({ user: user_id, "items.productId": ProductID }, { $inc: { 'items.$.quantity': 1 } })
