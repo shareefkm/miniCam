@@ -132,7 +132,7 @@ const sendVerifyMail = async(name,email,user_id)=>{
         console.log(process.env.USER,process.env.PASS,process.env.SESIONSECRET);
         const transporter = nodeMailer.createTransport({
             host:'smtp.gmail.com',
-            port:587,
+            port:465,
             secure:true,
             auth:{
                 user:process.env.USER,
